@@ -1,16 +1,317 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Eventify</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Eventify - Login</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: #f0f2f5;
+      }
+
+      .login-container {
+        max-width: 400px;
+        margin: 5rem auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        padding: 2rem;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin-top: 1rem;
+        color: #555;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      input[type="submit"] {
+        width: 100%;
+        margin-top: 2rem;
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background: #0056b3;
+      }
+
+      footer {
+        padding: 1rem;
+        background: #f4f4f4;
+      }
+
+      .status {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+
+      .status span {
+        font-weight: bold;
+      }
+
+      .topbar {
+        background: #343a40;
+        padding: 1rem 2rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar-content {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+      }
+
+      .username {
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      .logout-button {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .logout-button:hover {
+        background: #c82333;
+      }
+
+      .dashboard-container {
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 1rem;
+        font-family: sans-serif;
+      }
+
+      .notifications {
+        margin-top: 2rem;
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 0 6px rgba(0,0,0,0.05);
+      }
+
+      .notifications h2 {
+        margin-top: 0;
+        color: #333;
+      }      
+
+      .notification-bell {
+        position: relative;
+        margin-right: 1rem;
+        cursor: pointer;
+      }
+
+      .notification-count {
+        position: absolute;
+        top: -6px;
+        right: -4px;
+        background: red;
+        color: white;
+        font-size: 0.7rem;
+        padding: 4px 4px;
+        border-radius: 50%;
+      }
+
+      .notifications-dropdown {
+        position: absolute;
+        top: 20px;
+        right: 1.5rem;
+        width: 300px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        z-index: 1000;
+        padding: 1rem;
+        color: black;
+        display: inline;
+      }
+
+      .hidden {
+        display: none;
+      }
+      
+      /* Dashboard Layout */
+      .dashboard-container {
+        padding: 2rem;
+        background-color: #f9f9f9;
+      }
+
+      .dashboard-main {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .tab {
+        padding: 0.5rem 1.25rem;
+        border: none;
+        border-radius: 8px;
+        background-color: #eee;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+
+      .tab:hover {
+        background-color: #ddd;
+      }
+
+      .tab.active {
+        background-color: #4f46e5;
+        color: white;
+      }
+
+      /* Tab Content */
+      .tab-pane {
+        display: block;
+      }
+
+      .tab-pane.hidden {
+        display: none;
+      }
+
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      /* Card Styles */
+      .card {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1.25rem;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+
+      .card:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .card p {
+        font-size: 0.9rem;
+        color: #4b5563;
+      }
+
+      /* Section Titles */
+      h2 {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        color: #111827;
+      }
+
+      /* Follow checkboxes */
+      .follow-toggle {
+        margin-top: 1.25rem;
+        padding: 1rem;
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+      }
+
+      .follow-toggle label {
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
+
+    </style>
   </head>
 
   <body>
-    <%= yield %>
+    <main>
+      <div>
+        <%= yield %>
+      </div>
+    </main>
+
+    <footer>
+      <% status_info = Thread.current[:webservice_status] %>
+      <% if status_info %>
+        <% color = case status_info[:status]
+          when 200..299 then "#28a745"
+          when 400..499 then "#ffc107"
+          else "#dc3545"
+        end %>
+
+        <div class="status">
+          <span style="color: <%= color %>;">
+            Status: <%= status_info[:status] %>
+          </span>
+          <span style="color: #333;">
+            Tempo de resposta: <%= status_info[:duration_ms] %>ms
+          </span>
+        </div>
+      <% else %>
+        <div style="text-align: center; color: #666;">
+          Nenhuma informação de status disponível.
+        </div>
+      <% end %>
+    </footer>
   </body>
 </html>

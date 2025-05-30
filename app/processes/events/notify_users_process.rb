@@ -3,24 +3,26 @@
 module Events
   # Process to notify attendees of an event when it is updated.
   class NotifyUsersProcess < SolidProcess::Base
-    input :event_id
-
-    step :load_event
-    step :notify_attendees
-
-    def load_event(ctx)
-      ctx[:event] = Event.find(ctx[:event_id])
+    step :build_notification
+    step :broadcast_notification
+  
+    def build_notification(input, **)
+      user = input[:user]
+      event = input[:event]
+      {
+        user_id: user.id,
+        message: "Evento '#{event.title}' acontecerá amanhã!",
+        timestamp: Time.current
+      }
     end
-
-    def notify_attendees(ctx)
-      ctx[:event].attendees.each do |user|
-        SolidSupport::Notifications.send_notification(
-          inbox: user.inbox_url,
-          target: ctx[:event].url,
-          summary: "Evento atualizado: #{ctx[:event].title}",
-          type: RDF::Vocab::AS.Update
-        )
-      end
+  
+    def broadcast_notification(notification, **)
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "notifications_user_#{notification[:user_id]}",
+        target: "notifications",
+        partial: "notifications/notification",
+        locals: { notification: notification }
+      )
     end
   end
 end
