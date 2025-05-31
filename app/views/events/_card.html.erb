@@ -1,7 +1,6 @@
-<div class="card hover:shadow-lg transition-shadow block p-4 rounded-lg border bg-white cursor-pointer"
-     data-action="click->dashboard#loadDetails"
-     data-dashboard-url="<%= event_path(event) %>">
-  <h3 class="text-xl font-semibold mb-2"><%= event.title %></h3>
-  <p class="text-sm text-gray-600"><%= truncate(event.description, length: 100) %></p>
-  <p class="text-xs text-gray-400 mt-2">Por <%= event.user.name %></p>
-</div>
+<%= link_to event_path(event), data: { turbo_frame: "dashboard-container" }, 
+  class: "card hover:shadow-lg transition-shadow block p-4 rounded-lg border bg-white" do %>
+    <h3 class="text-xl font-semibold mb-2"><%= event.title %></h3>
+    <p class="text-sm text-gray-600"><%= truncate(event.description, length: 100) %></p>
+    <p class="text-xs text-gray-400 mt-2">Por <%= event.user.name %></p>
+<% end %>

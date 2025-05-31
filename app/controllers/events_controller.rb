@@ -1,19 +1,15 @@
 class EventsController < ApplicationController
   before_action :set_event, only: %i[ show edit update destroy ]
+  before_action :allow_turbo_only, except: %i[ index ]
 
   def index
     @events = event_repo.all
   end
 
   def show
-    @follow = current_user.follows_as_follower.find_by(followable: @event)
-    @author_follow = current_user.follows_as_follower.find_by(followable: @event.user)
-  
-    respond_to do |format|
-      format.html
-      format.turbo_stream { render partial: "events/detail", locals: { event: @event } }
-    end
-  end  
+    follow = current_user.follows_as_follower.find_by(followable: @event)
+    author_follow = current_user.follows_as_follower.find_by(followable: @event.user)
+  end
 
   def new
     @event = event_repo.new
@@ -52,6 +48,12 @@ class EventsController < ApplicationController
 
     def set_event
       @event = event_repo.find(params.expect(:id))
+    end
+
+    def allow_turbo_only
+      unless turbo_frame_request?
+        redirect_to root_path and return
+      end
     end
 
     def event_params

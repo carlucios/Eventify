@@ -1,22 +1,4 @@
-<h1 class="text-2xl font-bold"><%= @event.title %></h1>
-<p><%= @event.description %></p>
+<turbo-frame id="dashboard-container">
+  <%= render "detail", event: @event, follow: @follow, author_follow: @author_follow %>
+</turbo-frame>
 
-<div class="follow-toggle mt-4">
-  <%= form_with url: toggle_follow_path, method: :post, local: true do |f| %>
-    <%= hidden_field_tag :followable_type, "Event" %>
-    <%= hidden_field_tag :followable_id, @event.id %>
-    <%= check_box_tag :follow, "1", @follow.present?, onchange: "this.form.submit()" %>
-    <%= label_tag :follow, "Seguir este evento" %>
-  <% end %>
-</div>
-
-<div class="follow-toggle mt-2">
-  <strong>Organizador:</strong> <%= @event.user.name %>
-  <%= form_with url: toggle_follow_path, method: :post, local: true do |f| %>
-    <%= hidden_field_tag :followable_type, "User" %>
-    <%= hidden_field_tag :followable_id, @event.user.id %>
-    <%= check_box_tag :follow_user, "1", @author_follow.present?,
-                      onchange: "this.form.submit()" %>
-    <%= label_tag :follow_user, "Seguir o organizador" %>
-  <% end %>
-</div>

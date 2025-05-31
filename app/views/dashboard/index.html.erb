@@ -1,46 +1,43 @@
-<div class="dashboard-container">
+<div class="dashboard-container" data-controller="dashboard tabs">
   <%= render "shared/topbar" %>
 
-  <main class="dashboard-main" data-controller="tabs">
-    <!-- Tabs -->
-    <div class="tabs">
-      <button data-action="click->tabs#showForYou" class="tab active" data-tabs-target="forYouTab">For You</button>
-      <button data-action="click->tabs#showExplore" class="tab" data-tabs-target="exploreTab">Explore</button>
-    </div>
+  <main class="dashboard-main">
+    <turbo-frame id="dashboard-container">
+      <div class="tabs">
+        <button data-action="click->tabs#showForYou" class="tab active" data-tabs-target="forYouTab">For You</button>
+        <button data-action="click->tabs#showExplore" class="tab" data-tabs-target="exploreTab">Explore</button>
+      </div>
 
-    <!-- Tab contents -->
-    <div class="tab-content">
-        <!-- For You -->
+      <div class="tab-content">
         <div data-tabs-target="forYou" class="tab-pane">
-            <h2>Eventos que você segue</h2>
-            <div class="cards-grid">
-                <% @followed_events.each do |event| %>
-                <%= render partial: "events/card", locals: { event: event } %>
-                <% end %>
-            </div>
+          <h2>Eventos que você segue</h2>
+          <div class="cards-grid">
+            <% @followed_events.each do |event| %>
+              <%= render partial: "events/card", locals: { event: event } %>
+            <% end %>
+          </div>
 
-            <h2 class="mt-6">Artigos que você segue</h2>
-            <div class="cards-grid">
-                <% @followed_articles.each do |article| %>
-                <%= render partial: "articles/card", locals: { article: article } %>
-                <% end %>
-            </div>
+          <h2 class="mt-6">Artigos que você segue</h2>
+          <div class="cards-grid">
+            <% @followed_articles.each do |article| %>
+              <%= render partial: "articles/card", locals: { article: article } %>
+            <% end %>
+          </div>
         </div>
 
-      <!-- Explore -->
-      <div data-tabs-target="explore" class="tab-pane hidden">
-        <h2>Explore todos os eventos e artigos</h2>
+        <div data-tabs-target="explore" class="tab-pane hidden">
+          <h2>Explore todos os eventos e artigos</h2>
+          <div class="cards-grid">
+            <% @all_events.each do |event| %>
+              <%= render partial: "events/card", locals: { event: event } %>
+            <% end %>
 
-        <div class="cards-grid">
-          <% @all_events.each do |event| %>
-            <%= render partial: "events/card", locals: { event: event } %>
-          <% end %>
-
-          <% @all_articles.each do |article| %>
-            <%= render partial: "articles/card", locals: { article: article } %>
-          <% end %>
+            <% @all_articles.each do |article| %>
+              <%= render partial: "articles/card", locals: { article: article } %>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
+    </turbo-frame>
   </main>
 </div>

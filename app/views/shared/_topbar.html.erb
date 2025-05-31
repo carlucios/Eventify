@@ -2,11 +2,10 @@
   <div class="topbar-content">
     <span class="username">👤 <%= current_user.name.presence || current_user.email %></span>
 
-    <div style="display: flex; align-items: center; position: relative;">
-      <!-- Botão da campainha -->
+    <div data-controller="notifications" style="display: flex; align-items: center; position: relative;">
+      
       <div
         class="notification-bell"
-        data-controller="notifications"
         data-action="click->notifications#toggleDropdown"
         data-notifications-target="bell"
         style="cursor: pointer;">
@@ -23,11 +22,10 @@
               data-notifications-target="count"></span>
       </div>
 
-      <!-- Dropdown separado -->
       <div id="notifications-dropdown"
            class="notifications-dropdown hidden"
            data-notifications-target="dropdown"
-           style="position: absolute; top: 40px; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000;">
+           style="position: absolute; top: 25px; right: 90px; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000;">
         <h3 style="margin-top: 0;">Notificações</h3>
 
         <ul id="notifications-list" data-notifications-target="list" style="list-style: none; padding-left: 0; margin: 0;">
@@ -36,7 +34,6 @@
           </li>
         </ul>
       </div>
-      
 
       <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "logout-button", data: { turbo: false } %>
     </div>

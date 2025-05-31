@@ -1,22 +1,35 @@
-<h1 class="text-2xl font-bold"><%= @event.title %></h1>
-<p><%= @event.description %></p>
+<div class="event-detail">
+  <!-- Botão de voltar -->
+  <%= link_to "← Voltar ao dashboard", root_path, data: { turbo_frame: "dashboard-container" }, class: "back-link" %>
 
-<div class="follow-toggle mt-4">
-  <%= form_with url: toggle_follow_path, method: :post, local: true do |f| %>
-    <%= hidden_field_tag :followable_type, "Event" %>
-    <%= hidden_field_tag :followable_id, @event.id %>
-    <%= check_box_tag :follow, "1", @follow.present?, onchange: "this.form.submit()" %>
-    <%= label_tag :follow, "Seguir este evento" %>
-  <% end %>
-</div>
+  <div>
+    <!-- Título e descrição do evento -->
+    <h1><%= event.title %></h1>
+    
+    <div class="details-info">
+      <p><%= event.description %></p>
 
-<div class="follow-toggle mt-2">
-  <strong>Organizador:</strong> <%= @event.user.name %>
-  <%= form_with url: toggle_follow_path, method: :post, local: true do |f| %>
-    <%= hidden_field_tag :followable_type, "User" %>
-    <%= hidden_field_tag :followable_id, @event.user.id %>
-    <%= check_box_tag :follow_user, "1", @author_follow.present?,
-                      onchange: "this.form.submit()" %>
-    <%= label_tag :follow_user, "Seguir o organizador" %>
-  <% end %>
+      <!-- Seguir evento -->
+      <%= form_with url: toggle_follow_path, method: :post, local: true do %>
+        <%= hidden_field_tag :followable_type, "Event" %>
+        <%= hidden_field_tag :followable_id, event.id %>
+        <div class="checkbox-wrapper">
+          <%= check_box_tag :follow, "1", follow.present?, id: "follow_event", onchange: "this.form.submit()" %>
+          <%= label_tag :follow_event, "Seguir este evento" %>
+        </div>
+      <% end %>
+  </div>
+
+  <!-- Seguir organizador -->
+  <div class="follow-toggle">
+    <p><strong>Organizador:</strong> <%= event.user.name %></p>
+    <%= form_with url: toggle_follow_path, method: :post, local: true do %>
+      <%= hidden_field_tag :followable_type, "User" %>
+      <%= hidden_field_tag :followable_id, event.user.id %>
+      <div class="checkbox-wrapper">
+        <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
+        <%= label_tag :follow_user, "Seguir o organizador" %>
+      </div>
+    <% end %>
+  </div>
 </div>

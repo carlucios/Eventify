@@ -11,7 +11,6 @@ class FollowsController < ApplicationController
     follow&.destroy
     redirect_back fallback_location: root_path
   end
-
   
   def toggle
     followable = params[:followable_type].constantize.find(params[:followable_id])

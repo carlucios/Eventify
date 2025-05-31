@@ -1,0 +1,7 @@
+<%= turbo_frame_tag "details-container" do %>
+  <div class="pdf-viewer">
+    <%= link_to "← Voltar", article_path(@article), data: { turbo_frame: "details-container" }, class: "back-link" %>
+
+    <iframe src="<%= @article.file %>" width="100%" height="600px" frameborder="0"></iframe>
+  </div>
+<% end %>

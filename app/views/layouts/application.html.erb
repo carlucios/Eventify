@@ -7,6 +7,7 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= javascript_include_tag "application", type: "module" %>
 
     <style>
       html, body {
@@ -77,12 +78,13 @@
 
       .status {
         display: flex;
-        justify-content: space-evenly;
+        justify-content: center;
         align-items: center;
       }
 
       .status span {
         font-weight: bold;
+        margin-right: 10px;
       }
 
       .topbar {
@@ -143,7 +145,6 @@
       .notification-bell {
         position: relative;
         margin-right: 1rem;
-        cursor: pointer;
       }
 
       .notification-count {
@@ -158,18 +159,8 @@
       }
 
       .notifications-dropdown {
-        position: absolute;
-        top: 20px;
-        right: 1.5rem;
-        width: 300px;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        z-index: 1000;
-        padding: 1rem;
         color: black;
-        display: inline;
+        font-size:small;
       }
 
       .hidden {
@@ -240,11 +231,13 @@
         color: inherit;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         transition: box-shadow 0.2s, transform 0.2s;
+        user-select: none;
       }
 
       .card:hover {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
         transform: translateY(-2px);
+        cursor: pointer;
       }
 
       .card h3 {
@@ -280,6 +273,86 @@
         margin-left: 0.5rem;
       }
 
+      .view-file {
+        padding-left: 10%;
+      }
+
+      .event-detail {
+        padding: 1.5rem;
+
+        .back-link {
+          color: #2563eb; // azul-600
+          text-decoration: underline;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #111827;
+        }
+
+        p {
+          margin-top: 1rem;
+          color: #374151;
+          font-size: 1rem;
+        }
+
+        .details-info {
+          display: flex;
+        }
+
+        .follow-toggle {
+          width: 300px;
+          margin-top: 1.25rem;
+          padding: 1rem;
+          background-color: #f3f4f6;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+
+          p {
+            margin-bottom: 0.75rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            color: #111827;
+          }
+        }
+
+        .checkbox-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: right;
+          padding-right: 20px;
+          
+          gap: 0.5rem;
+          cursor: pointer;
+          min-width: 200px;
+
+          input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border: 1.5px solid #9ca3af; // cinza médio
+            border-radius: 4px;
+            transition: border-color 0.2s ease;
+
+            &:checked {
+              background-color: #2563eb; // azul-600
+              border-color: #2563eb;
+            }
+          }
+
+          label {
+            margin: 0;
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: #111827;
+            user-select: none; // impede seleção do texto quando clica no checkbox
+          }
+        }
+      }
     </style>
   </head>
 
@@ -293,16 +366,10 @@
     <footer>
       <% status_info = Thread.current[:webservice_status] %>
       <% if status_info %>
-        <% color = case status_info[:status]
-          when 200..299 then "#28a745"
-          when 400..499 then "#ffc107"
-          else "#dc3545"
-        end %>
+        <% color = status_info[:status] %>
 
         <div class="status">
-          <span style="color: <%= color %>;">
-            Status: <%= status_info[:status] %>
-          </span>
+          <span style="width: 10px; height: 10px; background-color: <%= color %>; border-radius: 50%; display: inline-block;"></span>
           <span style="color: #333;">
             Tempo de resposta: <%= status_info[:duration_ms] %>ms
           </span>
