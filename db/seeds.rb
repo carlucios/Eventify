@@ -1,30 +1,32 @@
+# frozen_string_literal: true
+
 require 'faker'
 
-puts "🔄 Limpando o banco..."
+puts '🔄 Limpando o banco...'
 Follow.destroy_all
 Article.destroy_all
 Event.destroy_all
 User.destroy_all
 
-puts "👤 Criando usuários..."
+puts '👤 Criando usuários...'
 
 # Usuário fixo admin
 User.create!(
-  email: "admin@example.com",
-  password: "password",
-  password_confirmation: "password",
-  name: "Admin",
-  role: "admin"
+  email: 'admin@example.com',
+  password: 'password',
+  password_confirmation: 'password',
+  name: 'Admin',
+  role: 'admin'
 )
 
 # Criando 10 usuários comuns (attendees)
 users = 10.times.map do
   User.create!(
     email: Faker::Internet.unique.email,
-    password: "password",
-    password_confirmation: "password",
+    password: 'password',
+    password_confirmation: 'password',
     name: Faker::Name.name,
-    role: "attendee",
+    role: 'attendee',
     address: Faker::Address.full_address
   )
 end
@@ -33,41 +35,41 @@ end
 promoters = 10.times.map do
   User.create!(
     email: Faker::Internet.unique.email,
-    password: "password",
-    password_confirmation: "password",
+    password: 'password',
+    password_confirmation: 'password',
     name: Faker::Name.name,
-    role: "promoter",
+    role: 'promoter',
     address: Faker::Address.full_address
   )
 end
 
-puts "📅 Criando eventos científicos..."
+puts '📅 Criando eventos científicos...'
 
 SCI_EVENTS = [
-  "International Symposium on Quantum Computing",
-  "Global Conference on Artificial Intelligence",
-  "World Summit on Renewable Energy",
-  "International Workshop on Machine Learning",
-  "Annual Congress of Biomedical Research",
-  "Symposium on Climate Change and Sustainability",
-  "International Conference on Nanotechnology",
-  "Forum on Advanced Robotics",
-  "Congress on Environmental Sciences",
-  "Symposium on Neuroscience and Behavior"
-]
+  'International Symposium on Quantum Computing',
+  'Global Conference on Artificial Intelligence',
+  'World Summit on Renewable Energy',
+  'International Workshop on Machine Learning',
+  'Annual Congress of Biomedical Research',
+  'Symposium on Climate Change and Sustainability',
+  'International Conference on Nanotechnology',
+  'Forum on Advanced Robotics',
+  'Congress on Environmental Sciences',
+  'Symposium on Neuroscience and Behavior'
+].freeze
 
 SCI_DESCRIPTIONS = [
-  "An event dedicated to the latest advances in scientific research and technology.",
-  "Bringing together experts and scholars to discuss breakthroughs in AI.",
-  "A platform for researchers to present findings on renewable energy solutions.",
-  "Workshops and talks on the latest in machine learning algorithms and applications.",
-  "A gathering of biomedical researchers presenting innovative studies.",
-  "Focus on climate change challenges and sustainability efforts worldwide.",
-  "Exploring recent developments in nanotechnology and applications.",
-  "Discussions on state-of-the-art robotics and automation.",
-  "Research presentations on environmental protection and sustainability.",
-  "Latest discoveries in neuroscience and behavioral science."
-]
+  'An event dedicated to the latest advances in scientific research and technology.',
+  'Bringing together experts and scholars to discuss breakthroughs in AI.',
+  'A platform for researchers to present findings on renewable energy solutions.',
+  'Workshops and talks on the latest in machine learning algorithms and applications.',
+  'A gathering of biomedical researchers presenting innovative studies.',
+  'Focus on climate change challenges and sustainability efforts worldwide.',
+  'Exploring recent developments in nanotechnology and applications.',
+  'Discussions on state-of-the-art robotics and automation.',
+  'Research presentations on environmental protection and sustainability.',
+  'Latest discoveries in neuroscience and behavioral science.'
+].freeze
 
 events = promoters.flat_map do |promoter|
   3.times.map do
@@ -87,33 +89,33 @@ events = promoters.flat_map do |promoter|
   end
 end
 
-puts "📰 Criando artigos científicos..."
+puts '📰 Criando artigos científicos...'
 
 SCI_ARTICLES_TITLES = [
-  "A Novel Approach to Quantum Entanglement",
-  "Deep Learning Techniques for Medical Image Analysis",
-  "Renewable Energy Storage Solutions: A Review",
-  "Applications of CRISPR in Genetic Engineering",
-  "Climate Change Impact on Marine Biodiversity",
-  "Nanoparticle Synthesis and Characterization",
-  "Advancements in Autonomous Vehicle Technologies",
-  "Behavioral Patterns in Primates: A Meta-Analysis",
-  "Bioinformatics Tools for Genome Sequencing",
-  "Robotics in Surgical Procedures: Current Trends"
-]
+  'A Novel Approach to Quantum Entanglement',
+  'Deep Learning Techniques for Medical Image Analysis',
+  'Renewable Energy Storage Solutions: A Review',
+  'Applications of CRISPR in Genetic Engineering',
+  'Climate Change Impact on Marine Biodiversity',
+  'Nanoparticle Synthesis and Characterization',
+  'Advancements in Autonomous Vehicle Technologies',
+  'Behavioral Patterns in Primates: A Meta-Analysis',
+  'Bioinformatics Tools for Genome Sequencing',
+  'Robotics in Surgical Procedures: Current Trends'
+].freeze
 
 SCI_ARTICLES_ABSTRACTS = [
-  "This study explores the latest techniques in quantum entanglement for secure communications.",
-  "We evaluate deep learning models applied to MRI and CT scan data for disease diagnosis.",
-  "The article reviews different methods for storing energy generated from renewable sources.",
-  "A comprehensive overview of CRISPR gene-editing and its ethical implications.",
-  "Assessing the effects of global warming on various marine species and ecosystems.",
-  "Details the process of nanoparticle creation and their potential industrial uses.",
-  "Examines the development of self-driving cars and their integration in modern transport.",
-  "Meta-analysis of observed behavioral trends in various primate species.",
-  "Presentation of new bioinformatics software to accelerate genome analysis.",
-  "Discusses the role of robots assisting in minimally invasive surgeries."
-]
+  'This study explores the latest techniques in quantum entanglement for secure communications.',
+  'We evaluate deep learning models applied to MRI and CT scan data for disease diagnosis.',
+  'The article reviews different methods for storing energy generated from renewable sources.',
+  'A comprehensive overview of CRISPR gene-editing and its ethical implications.',
+  'Assessing the effects of global warming on various marine species and ecosystems.',
+  'Details the process of nanoparticle creation and their potential industrial uses.',
+  'Examines the development of self-driving cars and their integration in modern transport.',
+  'Meta-analysis of observed behavioral trends in various primate species.',
+  'Presentation of new bioinformatics software to accelerate genome analysis.',
+  'Discusses the role of robots assisting in minimally invasive surgeries.'
+].freeze
 
 articles = users.flat_map do |user|
   rand(3..7).times.map do
@@ -127,7 +129,7 @@ articles = users.flat_map do |user|
   end
 end
 
-puts "🔗 Criando follows..."
+puts '🔗 Criando follows...'
 
 User.all.each do |user|
   # Seguir de 9 a 12 eventos aleatórios
@@ -146,4 +148,4 @@ User.all.each do |user|
   end
 end
 
-puts "✅ Seed finalizado com sucesso!"
+puts '✅ Seed finalizado com sucesso!'

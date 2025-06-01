@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BaseRepository
   def initialize(model_class)
     @model_class = model_class
@@ -17,13 +19,13 @@ class BaseRepository
 
   def update(id, attrs)
     record = find(id)
-    record.update(attrs) if record
+    record&.update(attrs)
     record
   end
 
   def destroy(id)
     record = find(id)
-    record.destroy if record
+    record&.destroy
     record
   end
 end

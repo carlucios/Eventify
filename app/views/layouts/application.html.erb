@@ -9,6 +9,10 @@
     <%= javascript_importmap_tags %>
     <%= javascript_include_tag "application", type: "module" %>
 
+    <% if current_user %>
+      <meta name="current-user-id" content="<%= current_user.id %>">
+    <% end %>
+
     <style>
       html, body {
         height: 100%;

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/repositories/follow_repository.rb
 class FollowRepository < BaseRepository
   def initialize
@@ -18,6 +20,7 @@ class FollowRepository < BaseRepository
 
   def create_follow(follower_id:, followed_id:)
     return if follow?(follower_id, followed_id)
+
     @model_class.create(follower_id: follower_id, followed_id: followed_id)
   end
 

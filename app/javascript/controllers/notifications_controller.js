@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["dropdown", "bell"]
+  static targets = ["dropdown", "count", "list", "emptyMessage", "bell"]
 
   connect() {
     this.handleOutsideClick = this.handleOutsideClick.bind(this)
@@ -15,6 +15,11 @@ export default class extends Controller {
   toggleDropdown(event) {
     event.stopPropagation()
     this.dropdownTarget.classList.toggle("hidden")
+
+    if (!this.dropdownTarget.classList.contains("hidden")) {
+      this.countTarget.classList.add("hidden")
+      this.countTarget.textContent = ""
+    }
   }
 
   handleOutsideClick(event) {

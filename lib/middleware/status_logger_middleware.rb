@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StatusLoggerMiddleware
   def initialize(app)
     @app = app
@@ -21,11 +23,11 @@ class StatusLoggerMiddleware
   def status(duration_ms)
     case duration_ms
     when 0..300
-      "#28a745"
+      '#28a745'
     when 301..1000
-      "#ffc107"
+      '#ffc107'
     else
-      "#dc3545"
+      '#dc3545'
     end
   end
 end

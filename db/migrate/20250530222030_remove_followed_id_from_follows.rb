@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveFollowedIdFromFollows < ActiveRecord::Migration[8.0]
   def change
     remove_foreign_key :follows, column: :followed_id
@@ -5,4 +7,3 @@ class RemoveFollowedIdFromFollows < ActiveRecord::Migration[8.0]
     remove_column :follows, :followed_id
   end
 end
-

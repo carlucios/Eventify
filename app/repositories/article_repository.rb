@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ArticleRepository
   def all
     Article.includes(:user).order(created_at: :desc)

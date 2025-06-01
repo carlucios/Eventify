@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventRepository < BaseRepository
   def initialize
     super(Event)
@@ -9,7 +11,7 @@ class EventRepository < BaseRepository
 
   def upcoming_nearby(latitude, longitude, radius_km = 10)
     Event
-      .where("start_date > ?", Time.current)
+      .where('start_date > ?', Time.current)
       .select do |event|
         distance = Geocoder::Calculations.distance_between(
           [latitude, longitude],
@@ -20,6 +22,6 @@ class EventRepository < BaseRepository
   end
 
   def published
-    Event.where("start_date <= ? AND end_date >= ?", Time.current, Time.current)
+    Event.where('start_date <= ? AND end_date >= ?', Time.current, Time.current)
   end
 end

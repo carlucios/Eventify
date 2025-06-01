@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FollowsController < ApplicationController
   before_action :authenticate_user!
 
@@ -11,20 +13,20 @@ class FollowsController < ApplicationController
     follow&.destroy
     redirect_back fallback_location: root_path
   end
-  
+
   def toggle
     followable_type = params[:followable_type]
     followable_id = params[:followable_id]
     followable = followable_type.constantize.find(followable_id)
-  
+
     follow = current_user.follows_as_follower.find_by(followable: followable)
-  
+
     if follow
       follow.destroy
     else
       current_user.follows_as_follower.create!(followable: followable)
     end
-  end  
+  end
 
   private
 

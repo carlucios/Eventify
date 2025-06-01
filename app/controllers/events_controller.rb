@@ -1,29 +1,32 @@
+# frozen_string_literal: true
+
+# Controller responsible for managing events created by users.
+# Includes standard CRUD actions and additional support for Turbo Frame requests.
 class EventsController < ApplicationController
-  before_action :set_event, only: %i[ show edit update destroy ]
-  before_action :allow_turbo_only, except: %i[ index ]
+  before_action :set_event, only: %i[show edit update destroy]
+  before_action :allow_turbo_only, except: %i[index]
 
   def index
-    @events = event_repo.all
+    events = event_repo.all
   end
 
   def show
-    Rails.logger.info "FOLLOW #{current_user.follows_as_follower.find_by(followable: @event).inspect}"
-    @follow = current_user.follows_as_follower.find_by(followable: @event)
-    @author_follow = current_user.follows_as_follower.find_by(followable: @event.user)
+    user_follows = current_user.follows_as_follower
+    @follow = user_follows.find_by(followable: @event)
+    @author_follow = user_follows.find_by(followable: @event.user)
   end
 
   def new
-    @event = event_repo.new
+    event = event_repo.new
   end
 
-  def edit
-  end
+  def edit; end
 
   def create
-    @event = event_repo.create(event_params.merge(user_id: current_user.id))
+    event = event_repo.create(event_params.merge(user_id: current_user.id))
 
-    if @event.persisted?
-      redirect_to @event, notice: "Event was successfully created."
+    if event.persisted?
+      redirect_to event, notice: 'Event was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -31,7 +34,7 @@ class EventsController < ApplicationController
 
   def update
     if @event.update(event_params)
-      redirect_to @event, notice: "Event was successfully updated.", status: :see_other
+      redirect_to @event, notice: 'Event was successfully updated.', status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -39,25 +42,26 @@ class EventsController < ApplicationController
 
   def destroy
     @event.destroy!
-    redirect_to events_path, notice: "Event was successfully destroyed.", status: :see_other
+    redirect_to events_path, notice: 'Event was successfully destroyed.', status: :see_other
   end
 
   private
-    def event_repo
-      @event_repo ||= EventRepository.new
-    end
 
-    def set_event
-      @event = event_repo.find(params.expect(:id))
-    end
+  def event_repo
+    @event_repo ||= EventRepository.new
+  end
 
-    def allow_turbo_only
-      unless turbo_frame_request?
-        redirect_to root_path and return
-      end
-    end
+  def set_event
+    @event = event_repo.find(params.expect(:id))
+  end
 
-    def event_params
-      params.require(:event).permit(:title, :description, :start_date, :end_date, :address, :latitude, :longitude)
-    end
+  def allow_turbo_only
+    return if turbo_frame_request?
+
+    redirect_to root_path and return
+  end
+
+  def event_params
+    params.require(:event).permit(:title, :description, :start_date, :end_date, :address, :latitude, :longitude)
+  end
 end
