@@ -1,1 +1,0 @@
-import "./notifications_channel"

@@ -3,9 +3,18 @@
 
   <main class="dashboard-main">
     <turbo-frame id="dashboard-container">
-      <div class="tabs">
-        <button data-action="click->tabs#showForYou" class="tab active" data-tabs-target="forYouTab">For You</button>
-        <button data-action="click->tabs#showExplore" class="tab" data-tabs-target="exploreTab">Explore</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <!-- Abas (extremidade esquerda) -->
+        <div style="display: flex; gap: 1rem; font-size: 11px; color: rgba(0, 0, 0, 0.847);">
+          <button data-action="click->tabs#showForYou" class="tab active" data-tabs-target="forYouTab">For You</button>
+          <button data-action="click->tabs#showExplore" class="tab" data-tabs-target="exploreTab">Explore</button>
+        </div>
+
+        <!-- Botões de criação (extremidade direita) -->
+        <div style="display: flex; gap: 0.5rem; font-size: 11px; color: rgba(0, 0, 0, 0.847);">
+          <%= link_to "Novo Evento", new_event_path, data: { turbo_frame: "dashboard-container" }, class: "tab", style: "color: inherit; text-decoration: none;" %>
+          <%= link_to "Novo Artigo", new_article_path, data: { turbo_frame: "dashboard-container" }, class: "tab", style: "color: inherit; text-decoration: none;" %>
+        </div>
       </div>
 
       <div class="tab-content">

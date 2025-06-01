@@ -28,4 +28,8 @@ class BaseRepository
     record&.destroy
     record
   end
+
+  def new(attrs = {})
+    @model_class.new(attrs)
+  end
 end

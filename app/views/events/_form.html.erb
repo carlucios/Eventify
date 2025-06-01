@@ -1,57 +1,41 @@
-<%= form_with(model: event) do |form| %>
-  <% if event.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:</h2>
+<%= form_with model: @event, local: false, html: { style: "display: flex; flex-direction: column; gap: 1rem; max-width: 600px;" } do |f| %>
+  <div style="display: flex; flex-direction: column;">
+    <%= f.label :title, style: "margin-bottom: 0.3rem; font-weight: bold;" %>
+    <%= f.text_field :title, style: "padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" %>
+  </div>
 
-      <ul>
-        <% event.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <div style="display: flex; flex-direction: column;">
+    <%= f.label :description, style: "margin-bottom: 0.3rem; font-weight: bold;" %>
+    <%= f.text_area :description, rows: 3, style: "padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :start_date %>
+    <%= f.datetime_select :start_date %>
+  </div>
+
+  <div class="field">
+    <%= f.label :end_date %>
+    <%= f.datetime_select :end_date %>
+  </div>
+
+  <div style="display: flex; flex-direction: column;">
+    <%= f.label :address, style: "margin-bottom: 0.3rem; font-weight: bold;" %>
+    <%= f.text_field :address, style: "padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" %>
+  </div>
+
+  <div style="display: flex; gap: 1rem;">
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <%= f.label :latitude, style: "margin-bottom: 0.3rem; font-weight: bold;" %>
+      <%= f.text_field :latitude, style: "padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <%= f.label :longitude, style: "margin-bottom: 0.3rem; font-weight: bold;" %>
+      <%= f.text_field :longitude, style: "padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.textarea :description %>
-  </div>
-
-  <div>
-    <%= form.label :start_date, style: "display: block" %>
-    <%= form.datetime_field :start_date %>
-  </div>
-
-  <div>
-    <%= form.label :end_date, style: "display: block" %>
-    <%= form.datetime_field :end_date %>
-  </div>
-
-  <div>
-    <%= form.label :address, style: "display: block" %>
-    <%= form.text_field :address %>
-  </div>
-
-  <div>
-    <%= form.label :latitude, style: "display: block" %>
-    <%= form.text_field :latitude %>
-  </div>
-
-  <div>
-    <%= form.label :longitude, style: "display: block" %>
-    <%= form.text_field :longitude %>
-  </div>
-
-  <div>
-    <%= form.label :user_id, style: "display: block" %>
-    <%= form.text_field :user_id %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="actions" style="margin-top: 1rem;">
+    <%= f.submit "Salvar Evento", style: "padding: 0.6rem 1.2rem; border: none; background-color: #007BFF; color: white; border-radius: 5px; cursor: pointer;" %>
   </div>
 <% end %>

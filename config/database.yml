@@ -23,13 +23,17 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
-  primary:
+  primary: &primary_development
     <<: *default
     database: eventify_development
   queue:
     <<: *default
     database: eventify_queue
     migrations_paths: db/queue_migrate
+  cache:
+    <<: *primary_development
+    database: app_production_cache
+    migrations_paths: db/cache_migrate
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -89,7 +93,12 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
+  primary: &primary_production
   <<: *default
   database: eventify_production
   username: eventify
   password: <%= ENV["EVENTIFY_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: app_production_cache
+    migrations_paths: db/cache_migrate

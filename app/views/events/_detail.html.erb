@@ -1,6 +1,15 @@
 <div class="event-detail">
-  <!-- Botão de voltar -->
-  <%= link_to "← Voltar ao dashboard", root_path, data: { turbo_frame: "dashboard-container" }, class: "back-link" %>
+  <!-- Container flex para alinhar botão voltar à esquerda e botões à direita -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <!-- Botão de voltar (esquerda) -->
+    <%= link_to "← Voltar ao dashboard", root_path, data: { turbo_frame: "dashboard-container" }, class: "back-link" %>
+
+    <!-- Botões de edição/exclusão (direita) -->
+    <div style="display: flex; gap: 0.5rem; font-size: 11px; color: rgba(0, 0, 0, 0.847);">
+      <%= link_to "Editar Evento", edit_event_path(event), data: { turbo_frame: "dashboard-container" }, class: "tab" , style: "color: inherit; text-decoration: none;" %>
+      <%= link_to "Excluir Evento", event_path(event), method: :delete, data: { confirm: "Tem certeza?" }, class: "tab text-red-600", style: "color: inherit; text-decoration: none;" %>
+    </div>
+  </div>
 
   <div>
     <!-- Título e descrição do evento -->
@@ -10,7 +19,7 @@
       <p><%= event.description %></p>
 
       <!-- Seguir evento -->
-      <%= form_with url: toggle_follow_path, method: :post, local: true do %>
+      <%= form_with url: toggle_follows_path, method: :post, local: true do %>
         <%= hidden_field_tag :followable_type, "Event" %>
         <%= hidden_field_tag :followable_id, event.id %>
         <div class="checkbox-wrapper">
@@ -18,12 +27,12 @@
           <%= label_tag :follow_event, "Seguir este evento" %>
         </div>
       <% end %>
-  </div>
+    </div>
 
   <!-- Seguir organizador -->
   <div class="follow-toggle">
     <p><strong>Organizador:</strong> <%= event.user.name %></p>
-    <%= form_with url: toggle_follow_path, method: :post, local: false do %>
+    <%= form_with url: toggle_follows_path, method: :post, local: false do %>
       <%= hidden_field_tag :followable_type, "User" %>
       <%= hidden_field_tag :followable_id, event.user.id %>
       <div class="checkbox-wrapper">

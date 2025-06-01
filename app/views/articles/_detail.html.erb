@@ -1,46 +1,52 @@
 <div class="event-detail">
-  <!-- Botão de voltar -->
-  <%= turbo_frame_tag "details-container" do %>
-
+  <!-- Container flex para alinhar botão voltar à esquerda e botões à direita -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <!-- Botão de voltar (esquerda) -->
     <%= link_to "← Voltar ao dashboard", root_path, data: { turbo_frame: "dashboard-container" }, class: "back-link" %>
 
-    <div>
-      <!-- Título e descrição do artigo -->
-      <h1><%= article.title %></h1>
+    <!-- Botões de edição/exclusão (direita) -->
+    <div style="display: flex; gap: 0.5rem; font-size: 11px; color: rgba(0, 0, 0, 0.847);">
+      <%= link_to "Editar Artigo", edit_article_path(article), data: { turbo_frame: "dashboard-container" }, class: "tab", style: "color: inherit; text-decoration: none;" %>
+      <%= link_to "Excluir Artigo", article_path(article), method: :delete, data: { confirm: "Tem certeza?" }, class: "tab text-red-600", style: "color: inherit; text-decoration: none;" %>
+    </div>
+  </div>
 
-      <div class="details-info">
-        <p><%= article.abstract %></p>
+  <div>
+    <!-- Título e descrição do artigo -->
+    <h1><%= article.title %></h1>
 
-        <!-- Ícone para visualizar o artigo em PDF -->
-        <div class="view-file">
-          <%= link_to file_view_article_path(article), data: { turbo_frame: "details-container" }, class: "file-icon", title: "Visualizar artigo" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" 
-                width="100" height="100" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-                class="file-icon-svg">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8zm1 7H8V8h7zm0 2H8v-1h7zm-3.5 4.5H8v-1h3.5z"/>
-            </svg>
-          <% end %>
-        </div>
+    <div class="details-info">
+      <p><%= article.abstract %></p>
+
+      <!-- Ícone para visualizar o artigo em PDF -->
+      <div class="view-file">
+        <%= link_to file_view_article_path(article), data: { turbo_frame: "details-container" }, class: "file-icon", title: "Visualizar artigo" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" 
+               width="100" height="100" 
+               fill="currentColor" 
+               viewBox="0 0 24 24"
+               class="file-icon-svg">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8zm1 7H8V8h7zm0 2H8v-1h7zm-3.5 4.5H8v-1h3.5z"/>
+          </svg>
+        <% end %>
       </div>
     </div>
+  </div>
 
-    <!-- Seguir autor -->
-    <div class="follow-toggle">
-      <p><strong>Autor:</strong> <%= article.user.name %></p>
+  <!-- Seguir autor -->
+  <div class="follow-toggle">
+    <p><strong>Autor:</strong> <%= article.user.name %></p>
 
-      <%= form_with url: toggle_follow_path, method: :post, local: true do %>
-        <%= hidden_field_tag :followable_type, "User" %>
-        <%= hidden_field_tag :followable_id, article.user.id %>
+    <%= form_with url: toggle_follows_path, method: :post, local: true do %>
+      <%= hidden_field_tag :followable_type, "User" %>
+      <%= hidden_field_tag :followable_id, article.user.id %>
 
-        <div class="checkbox-wrapper">
-          <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
-          <%= label_tag :follow_user, "Seguir o autor" %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+      <div class="checkbox-wrapper">
+        <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
+        <%= label_tag :follow_user, "Seguir o autor" %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
 <script>
@@ -53,4 +59,3 @@
     `;
   }
 </script>
-

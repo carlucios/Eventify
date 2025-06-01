@@ -4,10 +4,10 @@
 # Includes standard CRUD actions and additional support for Turbo Frame requests.
 class EventsController < ApplicationController
   before_action :set_event, only: %i[show edit update destroy]
-  before_action :allow_turbo_only, except: %i[index]
+  #before_action :allow_turbo_only, except: %i[index]
 
   def index
-    events = event_repo.all
+    event_repo.all
   end
 
   def show
@@ -17,16 +17,16 @@ class EventsController < ApplicationController
   end
 
   def new
-    event = event_repo.new
+    @event = event_repo.new
   end
 
   def edit; end
 
   def create
-    event = event_repo.create(event_params.merge(user_id: current_user.id))
+    @event = event_repo.create(event_params.merge(user_id: current_user.id))
 
-    if event.persisted?
-      redirect_to event, notice: 'Event was successfully created.'
+    if @event.persisted?
+      redirect_to @event, notice: 'Event was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,8 +41,11 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    @event.destroy!
-    redirect_to events_path, notice: 'Event was successfully destroyed.', status: :see_other
+    @event.destroy
+    respond_to do |format|
+      format.html { redirect_to dashboard_path, notice: "Evento excluído." }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@event) }
+    end
   end
 
   private
@@ -52,7 +55,7 @@ class EventsController < ApplicationController
   end
 
   def set_event
-    @event = event_repo.find(params.expect(:id))
+    @event = event_repo.find(params[:id])
   end
 
   def allow_turbo_only

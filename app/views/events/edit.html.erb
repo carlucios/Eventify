@@ -1,12 +1,10 @@
-<% content_for :title, "Editing event" %>
+<turbo-frame id="dashboard-container">
+<div class="login-container">
 
-<h1>Editing event</h1>
 
-<%= render "form", event: @event %>
+<h1>Edit Event</h1>
+<%= render 'form', event: @event %>
+<%= link_to 'Back', event_path(@event) %>
 
-<br>
-
-<div>
-  <%= link_to "Show this event", @event %> |
-  <%= link_to "Back to events", events_path %>
 </div>
+</turbo-frame>

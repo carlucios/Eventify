@@ -1,11 +1,16 @@
-<% content_for :title, "New article" %>
+<turbo-frame id="dashboard-container">
+<div class="login-container">
 
-<h1>New article</h1>
+  <% content_for :title, "New article" %>
 
-<%= render "form", article: @article %>
+  <h1>New article</h1>
 
-<br>
+  <%= render "form", article: @article %>
 
-<div>
-  <%= link_to "Back to articles", articles_path %>
+  <br>
+
+  <div>
+    <%= link_to "Back to Dashboard", root_path %>
+  </div>
 </div>
+</turbo-frame>

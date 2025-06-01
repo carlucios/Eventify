@@ -2,13 +2,18 @@
   <div class="topbar-content">
     <span class="username">👤 <%= current_user.name.presence || current_user.email %></span>
 
-    <div data-controller="notifications" style="display: flex; align-items: center; position: relative;">
-      
+    <div
+      data-controller="notifications"
+      data-notifications-url-value="/notifications.json"
+      data-notifications-interval-value="10000"
+      style="display: flex; align-items: center; position: relative;"
+    >
       <div
         class="notification-bell"
         data-action="click->notifications#toggleDropdown"
         data-notifications-target="bell"
-        style="cursor: pointer;">
+        style="cursor: pointer;"
+      >
         <svg xmlns="http://www.w3.org/2000/svg"
              fill="none" viewBox="0 0 24 24"
              stroke="currentColor"
@@ -17,19 +22,30 @@
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
 
-        <span id="notification-count"
-              class="notification-count hidden"
-              data-notifications-target="count"></span>
+        <span
+          id="notification-count"
+          class="notification-count hidden"
+          data-notifications-target="count"
+        ></span>
       </div>
 
-      <div id="notifications-dropdown"
-           class="notifications-dropdown hidden"
-           data-notifications-target="dropdown"
-           style="position: absolute; top: 25px; right: 90px; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000;">
-        <h3 style="margin-top: 0;">Notificações</h3>
+      <div
+        id="notifications-dropdown"
+        class="notifications-dropdown hidden"
+        data-notifications-target="dropdown"
+        style="position: absolute; top: 25px; right: 90px; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000;"
+      >
+        <h3 style="margin-top: 0; font-size: 1.4em;">Notificações</h3>
 
-        <ul id="notifications-list" data-notifications-target="list" style="list-style: none; padding-left: 0; margin: 0;">
-          <li class="no-notifications" data-notifications-target="emptyMessage">
+        <ul
+          id="notifications-list"
+          data-notifications-target="list"
+          style="list-style: none; padding-left: 0; margin: 0;"
+        >
+          <li
+            class="no-notifications"
+            data-notifications-target="emptyMessage"
+          >
             Você não possui notificações
           </li>
         </ul>

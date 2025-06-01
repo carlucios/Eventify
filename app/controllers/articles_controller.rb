@@ -3,19 +3,17 @@
 # Controller responsible for managing articles created by users.
 # Includes standard CRUD actions and additional support for Turbo Frame requests.
 class ArticlesController < ApplicationController
-  before_action :set_article, only: %i[edit update destroy]
+  before_action :set_article, only: %i[show edit update destroy]
   before_action :allow_turbo_only, except: %i[index]
 
   def index
-    @articles = article_repo.all
+    article_repo.all
   end
 
   def show
-    article = article_repo.find(params[:id])
     user_follows = current_user.follows_as_follower
-    @follow = user_follows.find_by(followable: article)
-    @author_follow = user_follows.find_by(followable: article.user)
-    render :show, locals: { article: }
+    @follow = user_follows.find_by(followable: @article)
+    @author_follow = user_follows.find_by(followable: @article.user)
   end
 
   def new
@@ -27,12 +25,12 @@ class ArticlesController < ApplicationController
   end
 
   def create
-    article = article_repo.create(article_params.merge(user_id: current_user.id))
+    @article = article_repo.create(article_params.merge(user_id: current_user.id))
 
-    if article.persisted?
-      redirect_to article, notice: 'Article was successfully created.'
+    if @article.persisted?
+      redirect_to @article, notice: 'Article was successfully created.'
     else
-      render :new, status: :unprocessable_entity, locals: { article: }
+      render :new, status: :unprocessable_entity, locals: { article: @article}
     end
   end
 
@@ -50,14 +48,15 @@ class ArticlesController < ApplicationController
   end
 
   def file_view
-    article = article_repo.find(params[:id])
-    render partial: 'articles/file_view', locals: { article: }
+    @article = article_repo.find(params[:id])
+    render partial: 'articles/file_view', locals: { article: @article }
   end
 
   private
 
   def set_article
     @article = article_repo.find(params[:id])
+    puts "ARTICLE #{@article}"
   end
 
   def allow_turbo_only

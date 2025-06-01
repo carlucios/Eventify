@@ -10,10 +10,10 @@ class Follow < ApplicationRecord
   private
 
   def notify_follow_created
-    ActiveSupport::Notifications.instrument('follow.created', follower: follower, followable: followable)
+    SendFollowNotificationJob.perform_later('follow.created', follower: follower, followable: followable)
   end
 
   def notify_follow_removed
-    ActiveSupport::Notifications.instrument('follow.destroyed', follower: follower, followable: followable)
+    SendFollowNotificationJob.perform_later('follow.destroyed', follower: follower, followable: followable)
   end
 end

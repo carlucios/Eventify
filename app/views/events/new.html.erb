@@ -1,11 +1,15 @@
-<% content_for :title, "New event" %>
+<turbo-frame id="dashboard-container">
+<div class="login-container">
+  <% content_for :title, "New event" %>
 
-<h1>New event</h1>
+  <h1>New event</h1>
 
-<%= render "form", event: @event %>
+  <%= render "form", event: @event %>
 
-<br>
+  <br>
 
-<div>
-  <%= link_to "Back to events", events_path %>
+  <div>
+    <%= link_to "Back to dashboard", root_path %>
+  </div>
 </div>
+</turbo-frame>

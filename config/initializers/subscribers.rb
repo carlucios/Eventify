@@ -1,25 +1,26 @@
-ActiveSupport::Notifications.subscribe('follow.created') do |*args|
-  event = ActiveSupport::Notifications::Event.new(*args)
-  payload = event.payload
+# frozen_string_literal: true
 
-  SendFollowNotificationJob.perform_later(
-    payload[:follower].id,
-    payload[:followable].class.name,
-    payload[:followable].id,
-    'created'
-  )
-end
+ActiveSupport::Notifications.subscribe(/follow\.(created|destroyed)/) do |event_name, _start, _finish, _id, payload|
+  follower = payload[:follower]
+  followable = payload[:followable]
 
-ActiveSupport::Notifications.subscribe('follow.destroyed') do |*args|
-  event = ActiveSupport::Notifications::Event.new(*args)
-  payload = event.payload
+  action = event_name.split('.').last
+  followable_type = followable.class.name
+  followable_name = followable.try(:name) || followable.try(:title) || followable.to_s
 
-  SendFollowNotificationJob.perform_later(
-    payload[:follower].id,
-    payload[:followable].class.name,
-    payload[:followable].id,
-    'destroyed'
-  )
+  message_to_follower = case action
+                        when 'created'
+                          "Você começou a seguir \"#{followable_name}\""
+                        when 'destroyed'
+                          "Você deixou de seguir \"#{followable_name}\""
+                        end
+
+  NotificationsMemoryStore.add_for_user(follower.id, message_to_follower)
+
+  if followable.is_a?(User) && action == 'created'
+    message_to_followable = "#{follower.name} começou a te seguir"
+    NotificationsMemoryStore.add_for_user(followable.id, message_to_followable)
+  end
 end
 
 ActiveSupport::Notifications.subscribe('event.upcoming') do |*args|
@@ -29,6 +30,7 @@ ActiveSupport::Notifications.subscribe('event.upcoming') do |*args|
   interested_users = (event_obj.followers + event_obj.user.followers).uniq
 
   interested_users.each do |user|
-    NotificationProcess.call(event: event_obj, user: user)
+    message = "O evento \"#{event_obj.title}\" começará em breve."
+    NotificationsMemoryStore.add_for_user(user.id, message)
   end
 end

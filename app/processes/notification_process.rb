@@ -1,87 +1,104 @@
+# frozen_string_literal: true
+
 class NotificationProcess < Solid::Process
   input do
-    attribute :user
-    attribute :event
-    attribute :follower
-    attribute :followable
-    attribute :action
+    attribute :event, default: nil
+    attribute :follower, default: nil
+    attribute :followable, default: nil
+    attribute :action, default: nil
+    attribute :user, default: nil
   end
 
   def call(attributes)
     Given(attributes)
-      .and_then(:determine_notification_target)
-      .and_then(:build_notification_message)
-      .and_then(:render_notification_html)
-      .and_then(:broadcast_notification)
+      .and_then(:determine_targets)
+      .and_then(:build_messages)
+      .and_then(:render_htmls)
+      .and_then(:broadcast_all)
   end
 
   private
 
-  def determine_notification_target(user:, followable:, **)
-    target = user || extract_followable_owner(followable)
-    Continue(notification_target: target)
+  def determine_targets(event:, follower:, followable:, action:, user:, **)
+    if event && user
+      Continue(targets: [{ user: user, type: :upcoming, event: event }])
+    elsif follower && followable && action
+      followable_owner = extract_followable_owner(followable)
+
+      Continue(targets: [
+                 { user: followable_owner, type: :owner, follower: follower, followable: followable, action: action },
+                 { user: follower, type: :follower, followable: followable, action: action }
+               ])
+    else
+      Fail.new('Missing required notification inputs')
+    end
   end
 
-  def build_notification_message(event:, user:, follower:, followable:, action:, **)
-    message = if event && user
-      "Evento '#{event.title}' vai acontecer amanhã!"
-    elsif follower && followable && action
-      build_follow_message(follower, followable, action)
-    else
-      raise ArgumentError, "Dados insuficientes para construir mensagem"
+  def build_messages(targets:, **)
+    targets.each do |target|
+      message = case target[:type]
+                when :upcoming
+                  "Evento '#{target[:event].title}' vai acontecer amanhã!"
+                when :owner
+                  "#{target[:follower].name} #{follow_action_word(target[:action])} #{followable_description(target[:followable])}"
+                when :follower
+                  "Você #{follow_action_word(target[:action])} #{followable_description(target[:followable])}"
+                end
+
+      target[:message] = message
     end
 
-    Continue(notification_message: message)
+    Continue(targets: targets)
   end
 
-  def build_follow_message(follower, followable, action)
-    case action
-    when :created
-      "#{follower.name} começou a seguir #{followable_description(followable)}"
-    when :destroyed
-      "#{follower.name} deixou de seguir #{followable_description(followable)}"
-    else
-      "Ação desconhecida"
+  def render_htmls(targets:, **)
+    targets.each do |target|
+      target[:html] = render_html(target[:message])
+    end
+
+    Continue(targets: targets)
+  end
+
+  def broadcast_all(targets:, **)
+    targets.each do |target|
+      message = { html: target[:html] }
+
+      NotificationsChannel.broadcast_to(target[:user], message)
+    end
+
+    Continue()
+  end
+
+  def render_html(message)
+    ApplicationController.renderer.render(
+      partial: 'notifications/notification',
+      locals: { message: message }
+    )
+  end
+
+  def extract_followable_owner(followable)
+    case followable
+    when User then followable
+    when Article, Event then followable.user
+    else raise ArgumentError, 'Unknown followable type'
     end
   end
 
   def followable_description(followable)
     case followable
-    when User
-      "você"
+    when User then 'você'
     when Article, Event
       "seu #{followable.model_name.human.downcase} \"#{followable.title}\""
     else
-      "um conteúdo seu"
+      'um conteúdo seu'
     end
   end
 
-  def render_notification_html(notification_message:, **)
-    html = ApplicationController.renderer.render(
-      partial: 'notifications/notification',
-      locals: { message: notification_message }
-    )
-
-    Continue(notification_html: html)
-  end
-
-  def broadcast_notification(notification_target:, notification_html:, **)
-    ActionCable.server.broadcast(
-      "notifications_#{notification_target.id}",
-      { html: notification_html }
-    )
-
-    Continue()
-  end
-
-  def extract_followable_owner(followable)
-    case followable
-    when User
-      followable
-    when Article, Event
-      followable.user
-    else
-      raise ArgumentError, "Unknown followable type"
+  def follow_action_word(action)
+    case action.to_sym
+    when :created then 'começou a seguir'
+    when :destroyed then 'deixou de seguir'
+    else 'interagiu com'
     end
   end
 end
