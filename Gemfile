@@ -65,10 +65,6 @@ end
 gem 'devise'
 gem 'devise-jwt'
 
-# Tests
-gem 'factory_bot_rails'
-gem 'rspec-rails'
-
 # Utilities
 gem 'faker'
 

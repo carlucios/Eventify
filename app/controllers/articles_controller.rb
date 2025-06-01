@@ -30,7 +30,7 @@ class ArticlesController < ApplicationController
     if @article.persisted?
       redirect_to @article, notice: 'Article was successfully created.'
     else
-      render :new, status: :unprocessable_entity, locals: { article: @article}
+      render :new, status: :unprocessable_entity, locals: { article: @article }
     end
   end
 

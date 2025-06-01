@@ -15,10 +15,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :follows, only: [:create, :destroy] do
+  resources :follows, only: %i[create destroy] do
     post :toggle, on: :collection
   end
-  
+
   resources :notifications, only: [:index] do
     collection do
       patch :mark_all_as_read

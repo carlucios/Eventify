@@ -4,7 +4,7 @@
 # Includes standard CRUD actions and additional support for Turbo Frame requests.
 class EventsController < ApplicationController
   before_action :set_event, only: %i[show edit update destroy]
-  #before_action :allow_turbo_only, except: %i[index]
+  before_action :allow_turbo_only, except: %i[index]
 
   def index
     event_repo.all
@@ -43,7 +43,7 @@ class EventsController < ApplicationController
   def destroy
     @event.destroy
     respond_to do |format|
-      format.html { redirect_to dashboard_path, notice: "Evento excluído." }
+      format.html { redirect_to dashboard_path, notice: 'Evento excluído.' }
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@event) }
     end
   end

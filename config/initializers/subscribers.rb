@@ -5,7 +5,6 @@ ActiveSupport::Notifications.subscribe(/follow\.(created|destroyed)/) do |event_
   followable = payload[:followable]
 
   action = event_name.split('.').last
-  followable_type = followable.class.name
   followable_name = followable.try(:name) || followable.try(:title) || followable.to_s
 
   message_to_follower = case action
