@@ -23,7 +23,7 @@
   <!-- Seguir organizador -->
   <div class="follow-toggle">
     <p><strong>Organizador:</strong> <%= event.user.name %></p>
-    <%= form_with url: toggle_follow_path, method: :post, local: true do %>
+    <%= form_with url: toggle_follow_path, method: :post, local: false do %>
       <%= hidden_field_tag :followable_type, "User" %>
       <%= hidden_field_tag :followable_id, event.user.id %>
       <div class="checkbox-wrapper">

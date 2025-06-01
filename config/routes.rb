@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get "dashboard/index"
+  mount SolidQueueDashboard::Engine, at: "/solid-queue"
   devise_for :users
 
   resources :events

@@ -17,7 +17,7 @@
             <% end %>
           </div>
 
-          <h2 class="mt-6">Artigos que você segue</h2>
+          <h2 class="mt-6">Artigos de autores que você segue</h2>
           <div class="cards-grid">
             <% @followed_articles.each do |article| %>
               <%= render partial: "articles/card", locals: { article: article } %>

@@ -7,8 +7,9 @@ class EventsController < ApplicationController
   end
 
   def show
-    follow = current_user.follows_as_follower.find_by(followable: @event)
-    author_follow = current_user.follows_as_follower.find_by(followable: @event.user)
+    Rails.logger.info "FOLLOW #{current_user.follows_as_follower.find_by(followable: @event).inspect}"
+    @follow = current_user.follows_as_follower.find_by(followable: @event)
+    @author_follow = current_user.follows_as_follower.find_by(followable: @event.user)
   end
 
   def new

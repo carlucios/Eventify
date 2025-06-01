@@ -7,8 +7,8 @@ class ArticlesController < ApplicationController
   end
 
   def show
-    follow = current_user.follows_as_follower.find_by(followable: @article)
-    author_follow = current_user.follows_as_follower.find_by(followable: @article.user)
+    @follow = current_user.follows_as_follower.find_by(followable: @article)
+    @author_follow = current_user.follows_as_follower.find_by(followable: @article.user)
   end
 
   def new

@@ -1,6 +1,0 @@
-:concurrency: 5
-:schedule:
-  notify_followers_of_upcoming_events:
-    cron: "0 0 * * *"
-    class: NotifyFollowersOfUpcomingEventsJob
-    queue: default

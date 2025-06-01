@@ -1,0 +1,5 @@
+schedule:
+  notify_followers_of_upcoming_events:
+    cron: "0 6 * * *"
+    job_class: NotifyFollowersOfUpcomingEventsJob
+    queue_name: default

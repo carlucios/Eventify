@@ -77,3 +77,6 @@ gem 'geocoder'
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
 
+#Code smells
+gem 'rubocop', require: false
+
