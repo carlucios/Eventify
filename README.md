@@ -52,10 +52,11 @@ Abaixo estão os conceitos aprendidos e aplicados neste projeto, junto com a jus
 
 O padrão MVC é padrão do Rails e como esse é um sistema pequeno, foi mantido, pra facilitar a separação de responsabilidades. A inclusão do padrão Repository serve para isolar regras de acesso a dados, facilitando testes e permitindo futuras mudanças no ORM. Toda a comunicacao dos ORMs Event/Article/Follow foi feita através de repositories.
 
-### 2. **ActiveJob + Callbacks e ActiveQueue + Sidekiq**
+### 2. **ActiveJob + Callbacks, ActiveQueue + Sidekiq e ActiveCache**
 
-A fila de jobs foi usada para que as tarefas de agendamento de notificações fossem processadas em background, com vistas a melhora da performance da aplicação. Foram feitas duas filas de notificações, notificaçao de follow/unfollow, o qual usou  callbacks para disparar as notificaçoes, e notificaçao de upcoming event, o qual utiliza a fila recurrent do AciveQueue.
+A fila de jobs foi usada para que as tarefas de agendamento de notificações fossem processadas em background, com vistas a melhoria da performance da aplicação. Foram feitas duas filas de notificações, notificaçao de follow/unfollow, a qual usou  callbacks para disparar as notificaçoes, e notificaçao de upcoming event, a qual utilizou a fila recurrent do AciveQueue.
 SolidQueue foi escolhido por ser uma fila moderna, local e bem integrada ao Rails 8.
+As notificaçoes foram armazenadas no SolidCache, já que elas não precisavam ser persistidas em banco. SolidCache é uma opçao quase tão eficiente que às opções pagas que foi disponibilizada nas últimas versões do Rails que se utiliza da velocidade de acesso dos SSDs.
 
 ### 3. **Design Pattern Observer com ActiveSupport::Notification**
 
