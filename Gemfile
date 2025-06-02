@@ -67,13 +67,8 @@ gem 'devise-jwt'
 
 # Utilities
 gem 'faker'
-
-# Solid gems
 gem 'geocoder'
-gem 'solid-process'
-
-gem 'sidekiq'
-gem 'sidekiq-scheduler'
+gem 'memory_profiler'
 
 # Code smells
 gem 'reek', require: false

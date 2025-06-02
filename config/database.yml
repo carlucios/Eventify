@@ -32,7 +32,7 @@ development:
     migrations_paths: db/queue_migrate
   cache:
     <<: *primary_development
-    database: app_production_cache
+    database: eventify_cache
     migrations_paths: db/cache_migrate
 
   # The specified database role being used to connect to PostgreSQL.
@@ -100,5 +100,5 @@ production:
   password: <%= ENV["EVENTIFY_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: app_production_cache
+    database: eventify_cache
     migrations_paths: db/cache_migrate

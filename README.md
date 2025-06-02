@@ -12,9 +12,17 @@ Desenvolvido com Ruby on Rails 8.0.2, o projeto aplica conceitos modernos de arq
 ## 📦 Tecnologias Utilizadas
 
 - [Ruby](https://www.ruby-lang.org/pt/) 3.4.3  
-- [Ruby on Rails](https://rubyonrails.org/) 8.0.2 
+- [Ruby on Rails](https://rubyonrails.org/) 8.0.2  
 - [PostgreSQL](https://www.postgresql.org/)  
 - [Devise + JWT](https://github.com/waiting-for-dev/devise-jwt) para autenticação  
+- [SolidQueue](https://github.com/solidusio/solidus_queue) 
+- [ActiveJob](https://api.rubyonrails.org/classes/ActiveJob.html)  
+- [ActiveSupport::Cache](https://api.rubyonrails.org/classes/ActiveSupport.html)  
+- [ActiveSupport::Notification](https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html)  
+- [Stimulus](https://stimulus.hotwired.dev/)  
+- [Hotwire (Turbo Frames)](https://turbo.hotwired.dev/)  
+- [Rubocop](https://rubocop.org/)  
+- [Reek](https://github.com/troessner/reek)  
 
 ---
 
@@ -51,41 +59,86 @@ rails server
 
 ## 🧠 Conceitos Aplicados
 
-### 1. Padrão MVC com Repositories
+### 1. Padrão MVC com Repository
 
-O padrão MVC é nativo do Rails e, por ser um sistema de pequeno porte, foi mantido para facilitar a separação de responsabilidades. A inclusão do padrão Repository serviu para isolar as regras de acesso a dados, facilitando os testes e permitindo futuras mudanças no ORM. Toda a comunicação com os modelos `Event`, `Article` e `Follow` foi feita por meio de repositórios. A exceção foi o modelo `User`, cuja gestão ficou sob responsabilidade do Devise.
-
-### 2. ActiveJob + Callbacks, SolidQueue + Sidekiq e ActiveCache
-
-A fila de jobs foi utilizada para que tarefas de agendamento de notificações fossem processadas em background. Foram implementadas duas filas:
-
-- **Follow/Unfollow:** Utilizando callbacks do Rails para disparar notificações.  
-- **Eventos futuros:** Utilizando a fila recorrente do SolidQueue para envio diário de notificações sobre eventos próximos.
-
-As notificações são armazenadas no ActiveCache, evitando persistência no banco e aproveitando a velocidade de leitura dos SSDs.
-
-### 3. Observer Pattern com ActiveSupport::Notification
-
-O `ActiveSupport::Notification` foi usado para implementar um padrão de publicação/assinatura desacoplado entre eventos do sistema e consumidores, permitindo envio e consumo de notificações em tempo real de forma personalizada.
-
-### 4. Middleware Personalizado com Métricas
-
-Um middleware customizado verifica a saúde da aplicação e exibe essas informações no rodapé da interface, útil para detectar falhas em serviços essenciais como banco de dados ou filas.
-
-### 5. Stimulus + Hotwire
-
-Tecnologias que permitem criar uma interface reativa, moderna e com comportamento de SPA:
-
-- **Stimulus:** Para adicionar dinamismo às interações.  
-- **Hotwire:** Para renderizações parciais, Turbo Frames e notificações em tempo real sem necessidade de WebSocket manual.
-
-### 6. Rubocop + Reek
-
-Ferramentas para análise estáica de código, garantindo legibilidade, limpeza e conformidade com boas práticas de Ruby e Rails.
+O padrão MVC, nativo do Rails, foi mantido para preservar a separação de responsabilidades. Como o sistema tem porte pequeno, não foi necessário aplicar arquiteturas mais complexas.  
+A inclusão do padrão **Repository** teve como objetivo isolar as regras de acesso a dados, facilitando os testes e permitindo futuras alterações no ORM.  
+Toda a comunicação com os modelos `Event`, `Article` e `Follow` foi feita por meio de repositórios. A exceção foi o modelo `User`, cuja gestão ficou sob responsabilidade do Devise.
 
 ---
 
+### 2. ActiveJob + SolidQueue + Callbacks
+
+Jobs foram utilizados para agendamento e envio de notificações em segundo plano, melhorando a performance e a experiência do usuário. Duas filas principais foram implementadas:
+
+- **Notificações de Follow/Unfollow:** Disparadas via *callbacks* do Rails.  
+- **Notificações de eventos futuros:** Agendadas diariamente utilizando a fila recorrente do SolidQueue.
+
+O `SolidQueue` foi escolhido por ser o backend de fila padrão do Rails 7.1+, leve, embutido e com excelente integração nativa. O adaptador de fila foi configurado para `:solid_queue` no `ActiveJob`.
+
+---
+
+### 3. Armazenamento Temporário com ActiveSupport::Cache
+
+As notificações são armazenadas no cache da aplicação utilizando `ActiveSupport::Cache`, evitando a necessidade de persistência em banco de dados.  
+Esse armazenamento temporário oferece leitura rápida e se beneficia do uso de SSDs, além de estar disponível por padrão no Rails moderno.
+
+---
+
+### 4. Observer Pattern com ActiveSupport::Notifications
+
+O `ActiveSupport::Notifications` foi usado para implementar o padrão Observer (publicador/assinante), possibilitando um sistema desacoplado de eventos internos.  
+Esse mecanismo permite que diferentes partes da aplicação ouçam e reajam a eventos, como a criação ou atualização de recursos, sem dependências diretas entre os componentes.
+
+---
+
+### 5. Middleware Personalizado com Métricas
+
+Um middleware personalizado foi implementado para monitorar a saúde da aplicação. Ele coleta e exibe informações no rodapé da interface, como:
+
+- Conectividade com o banco de dados  
+- Status da fila de jobs  
+- Tempo de resposta da API
+
+Esse recurso auxilia desenvolvedores e usuários administrativos na identificação rápida de problemas.
+
+---
+
+### 6. Stimulus + Hotwire (Turbo)
+
+As bibliotecas **Stimulus** e **Hotwire (Turbo)** foram utilizadas para criar uma interface moderna e responsiva, com comportamento de SPA (*Single Page Application*), sem abrir mão da simplicidade do stack Rails:
+
+- **Stimulus:** Responsável pela adição de interatividade leve e controle de comportamento nos elementos da UI.  
+- **Hotwire:** Permite atualizações em tempo real com Turbo Streams e renderizações dinâmicas com Turbo Frames, eliminando a necessidade de frameworks front-end como React ou Vue.  
+  Também foi essencial para o recebimento em tempo real de notificações, substituindo a necessidade de configurar WebSockets manualmente.
+
+---
+
+### 7. RuboCop + Reek
+
+Ferramentas de análise estática utilizadas para garantir a qualidade do código:
+
+- **RuboCop:** Verifica aderência a padrões de estilo e boas práticas da comunidade Ruby.  
+- **Reek:** Detecta *code smells* como métodos longos, classes grandes e responsabilidades duplicadas.
+
+Essas ferramentas ajudam a manter o código limpo, sustentável e fácil de dar manutenção a longo prazo.
+
+---
+
+## 🚀 Teste de Performance: Follows/Unfollows
+
+Para medir a performance da criação e remoção de follows em usuários, eventos e artigos, você pode usar a task Rake `performance:follows`.
+
+### Como rodar
+
+```bash
+
+bundle exec rake performance:follows TOTAL=10000
+
+```
+
 ## ✉️ Contato
 
-Carlucio Luis dos Santos — [carlucios@gmail.com](mailto:carlucios@gmail.com)  
-[https://github.com/carlucios](https://github.com/carlucios)
+Carlucio Luis dos Santos  
+📧 [carlucios@gmail.com](mailto:carlucios@gmail.com)  
+🔗 [https://github.com/carlucios](https://github.com/carlucios)
