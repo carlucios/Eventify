@@ -3,18 +3,18 @@
 **Aluno:** Carlucio Luis dos Santos  
 **Email:** carlucios@gmail.com  
 
-Eventify é um sistema web de gerenciamento de eventos e artigos, com funcionalidades voltadas tanto para usuários comuns quanto para promotores e autores. A aplicação permite o cadastro e login seguro via JWT, criação e visualização de eventos/artigos, além de um dashboard com notificações em tempo real.
+Eventify é um sistema web de gerenciamento de eventos e artigos, com funcionalidades voltadas tanto para usuários comuns quanto para promotores e autores. A aplicação permite cadastro e login seguros via JWT, criação e visualização de eventos e artigos, além de um dashboard com notificações em tempo real.
 
-Desenvolvido com Ruby on Rails 8, o projeto aplica conceitos modernos de arquitetura, filas de background, e componentes reativos com Hotwire. Foi projetado para ser simples de usar, mas com estrutura sólida e escalável, servindo como base para projetos mais robustos ou aplicações reais.
+Desenvolvido com Ruby on Rails 8.0.2, o projeto aplica conceitos modernos de arquitetura, filas de background e componentes reativos com Hotwire. Foi projetado para ser simples de usar, mas com uma estrutura sólida e escalável, servindo como base para projetos mais robustos ou aplicações reais.
 
 ---
 
 ## 📦 Tecnologias Utilizadas
 
-- [Ruby](https://www.ruby-lang.org/pt/) 3.2.2
-- [Ruby on Rails](https://rubyonrails.org/) 7.1.3
-- [PostgreSQL](https://www.postgresql.org/)
-- [Devise + JWT](https://github.com/waiting-for-dev/devise-jwt) para autenticação
+- [Ruby](https://www.ruby-lang.org/pt/) 3.4.3  
+- [Ruby on Rails](https://rubyonrails.org/) 8.0.2 
+- [PostgreSQL](https://www.postgresql.org/)  
+- [Devise + JWT](https://github.com/waiting-for-dev/devise-jwt) para autenticação  
 
 ---
 
@@ -35,43 +35,57 @@ rails db:setup
 
 # Inicie os serviços
 rails server
+```
 
-## ✅ Funcionalidades implementadas
+---
 
-- Autenticação com JWT: Cadastro e login seguro com Devise + JWT.
-- CRUD de eventos e artigos: Gerenciamento completo para promotores e autores.
-- Dashboard dinâmico: Painel com visão geral para estudantes e profissionais.
-- Notificações automáticas: Alertas quanto a eventos/autores de interesse via background jobs.
-- Notificações em tempo real: Atualizações ao vivo com Turbo Streams (Hotwire).
+## ✅ Funcionalidades Implementadas
 
-## 🧠 Conceitos aplicados
+- **Autenticação com JWT:** Cadastro e login seguros com Devise + JWT.  
+- **CRUD de eventos e artigos:** Gerenciamento completo para promotores e autores.  
+- **Dashboard dinâmico:** Painel com visão geral para estudantes e profissionais.  
+- **Notificações automáticas:** Alertas sobre eventos e autores de interesse via jobs em background.  
+- **Notificações em tempo real:** Atualizações ao vivo com Turbo Streams (Hotwire).  
 
-Abaixo estão os conceitos aprendidos e aplicados neste projeto, junto com a justificativa de sua utilização:
+---
 
-### 1. **Padrao MVC com Repositories**
+## 🧠 Conceitos Aplicados
 
-O padrão MVC é padrão do Rails e como esse é um sistema pequeno, foi mantido, pra facilitar a separação de responsabilidades. A inclusão do padrão Repository serve para isolar regras de acesso a dados, facilitando testes e permitindo futuras mudanças no ORM. Toda a comunicacao dos ORMs Event/Article/Follow foi feita através de repositories.
+### 1. Padrão MVC com Repositories
 
-### 2. **ActiveJob + Callbacks, ActiveQueue + Sidekiq e ActiveCache**
+O padrão MVC é nativo do Rails e, por ser um sistema de pequeno porte, foi mantido para facilitar a separação de responsabilidades. A inclusão do padrão Repository serviu para isolar as regras de acesso a dados, facilitando os testes e permitindo futuras mudanças no ORM. Toda a comunicação com os modelos `Event`, `Article` e `Follow` foi feita por meio de repositórios. A exceção foi o modelo `User`, cuja gestão ficou sob responsabilidade do Devise.
 
-A fila de jobs foi usada para que as tarefas de agendamento de notificações fossem processadas em background, com vistas a melhoria da performance da aplicação. Foram feitas duas filas de notificações, notificaçao de follow/unfollow, a qual usou  callbacks para disparar as notificaçoes, e notificaçao de upcoming event, a qual utilizou a fila recurrent do AciveQueue.
-SolidQueue foi escolhido por ser uma fila moderna, local e bem integrada ao Rails 8.
-As notificaçoes foram armazenadas no SolidCache, já que elas não precisavam ser persistidas em banco. SolidCache é uma opçao quase tão eficiente que às opções pagas que foi disponibilizada nas últimas versões do Rails que se utiliza da velocidade de acesso dos SSDs.
+### 2. ActiveJob + Callbacks, SolidQueue + Sidekiq e ActiveCache
 
-### 3. **Design Pattern Observer com ActiveSupport::Notification**
+A fila de jobs foi utilizada para que tarefas de agendamento de notificações fossem processadas em background. Foram implementadas duas filas:
 
-O ActiveSupport::Notification permite um publicar/subscrever desacoplado entre os eventos do sistema e os consumidores de notificação. Ele foi usado a fim de permitir o envio de notificaçoes em tempo real por parte do sistema e consumo dessas notificaçoes por parte dos usuários de forma personalizada.
+- **Follow/Unfollow:** Utilizando callbacks do Rails para disparar notificações.  
+- **Eventos futuros:** Utilizando a fila recorrente do SolidQueue para envio diário de notificações sobre eventos próximos.
 
-### 4. **Middleware personalizado com métricas do webservice**
+As notificações são armazenadas no ActiveCache, evitando persistência no banco e aproveitando a velocidade de leitura dos SSDs.
 
-Um middleware customizado foi adicionado para verificar a saúde da aplicação e exibir no rodapé da interface. Isso pode ser útil para detectar rapidamente se há falhas de conexão com serviços essenciais como banco de dados ou fila de jobs, durante o uso da aplicação.
+### 3. Observer Pattern com ActiveSupport::Notification
 
-### 5. **Stimulus + Hotwire**
+O `ActiveSupport::Notification` foi usado para implementar um padrão de publicação/assinatura desacoplado entre eventos do sistema e consumidores, permitindo envio e consumo de notificações em tempo real de forma personalizada.
 
-Essas tecnologias permitem a criação de uma UI moderna, reativa e com comportamento de SPA, sem a complexidade de front-ends como React ou Vue.
-Stimulus foi utilizado para dar dinamicidade e responsividade às interações com componentes do frontend.
-Hotwire é ideal para manter a produtividade do Rails, com renderizações parciais, atualizações automáticas via Turbo Frames. Além dele ter sido essencial pra implementar o frontend SPA, sem ele, teria sido necessário a instalaçao do Websockets a fim de implementar o recebimento em tempo real das notificações.
+### 4. Middleware Personalizado com Métricas
 
-### 6. **Rubocop + Reek**
+Um middleware customizado verifica a saúde da aplicação e exibe essas informações no rodapé da interface, útil para detectar falhas em serviços essenciais como banco de dados ou filas.
 
-Essas ferramentas automatizam a verificação de padrões de código e detectam smells (como métodos longos ou classes grandes). Com isso, o código permanece limpo, legível e dentro das boas práticas de Ruby e Rails, garantindo a manutenção do projeto a longo prazo.
+### 5. Stimulus + Hotwire
+
+Tecnologias que permitem criar uma interface reativa, moderna e com comportamento de SPA:
+
+- **Stimulus:** Para adicionar dinamismo às interações.  
+- **Hotwire:** Para renderizações parciais, Turbo Frames e notificações em tempo real sem necessidade de WebSocket manual.
+
+### 6. Rubocop + Reek
+
+Ferramentas para análise estáica de código, garantindo legibilidade, limpeza e conformidade com boas práticas de Ruby e Rails.
+
+---
+
+## ✉️ Contato
+
+Carlucio Luis dos Santos — [carlucios@gmail.com](mailto:carlucios@gmail.com)  
+[https://github.com/carlucios](https://github.com/carlucios)
