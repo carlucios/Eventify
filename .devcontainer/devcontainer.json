@@ -1,0 +1,22 @@
+{
+    "name": "Rails Dev Container",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+    },
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+      "rebornix.Ruby",
+      "ms-vscode.vscode-typescript-tslint-plugin",
+      "ms-azuretools.vscode-docker"
+    ],
+    "forwardPorts": [3000],
+    "postCreateCommand": "bundle install",
+    "remoteUser": "rails",
+    "remoteEnv": {
+      "RAILS_ENV": "development"
+    }
+  }
+  
