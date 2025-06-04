@@ -19,26 +19,40 @@
       <p><%= event.description %></p>
 
       <!-- Seguir evento -->
-      <%= form_with url: toggle_follows_path, method: :post, local: true do %>
-        <%= hidden_field_tag :followable_type, "Event" %>
-        <%= hidden_field_tag :followable_id, event.id %>
-        <div class="checkbox-wrapper">
-          <%= check_box_tag :follow, "1", follow.present?, id: "follow_event", onchange: "this.form.submit()" %>
-          <%= label_tag :follow_event, "Seguir este evento" %>
-        </div>
-      <% end %>
+      <turbo-frame id="follow_event_status">
+        <%= form_with url: toggle_follows_path, method: :post, data: { turbo_frame: "footer_status" } do %>
+          <%= hidden_field_tag :followable_type, "Event" %>
+          <%= hidden_field_tag :followable_id, event.id %>
+          <div class="checkbox-wrapper">
+            <%= check_box_tag :follow, "1", follow.present?, id: "follow_event" %>
+            <%= label_tag :follow_event, "Seguir este evento" %>
+          </div>
+        <% end %>
+      </turbo-frame>
     </div>
 
   <!-- Seguir organizador -->
   <div class="follow-toggle">
     <p><strong>Organizador:</strong> <%= event.user.name %></p>
-    <%= form_with url: toggle_follows_path, method: :post, local: false do %>
-      <%= hidden_field_tag :followable_type, "User" %>
-      <%= hidden_field_tag :followable_id, event.user.id %>
-      <div class="checkbox-wrapper">
-        <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
-        <%= label_tag :follow_user, "Seguir o organizador" %>
-      </div>
-    <% end %>
+    <turbo-frame id="follow_organizer_status">
+      <%= form_with url: toggle_follows_path, method: :post, data: { turbo_frame: "footer_status" } do %>
+        <%= hidden_field_tag :followable_type, "User" %>
+        <%= hidden_field_tag :followable_id, event.user.id %>
+        <div class="checkbox-wrapper">
+          <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user" %>
+          <%= label_tag :follow_user, "Seguir o organizador" %>
+        </div>
+      <% end %>
+    </turbo-frame>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:frame-load", () => {
+    document.querySelectorAll(".checkbox-wrapper input[type=checkbox]").forEach(checkbox => {
+      checkbox.addEventListener("change", (event) => {
+        event.target.closest("form").requestSubmit();
+      });
+    });
+  });
+</script>

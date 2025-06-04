@@ -368,23 +368,12 @@
         <%= yield %>
       </div>
     </main>
-
     <footer>
-      <% status_info = Thread.current[:webservice_status] %>
-      <% if status_info %>
-        <% color = status_info[:status] %>
-
-        <div class="status">
-          <span style="width: 10px; height: 10px; background-color: <%= color %>; border-radius: 50%; display: inline-block;"></span>
-          <span style="color: #333;">
-            Tempo de resposta: <%= status_info[:duration_ms] %>ms
-          </span>
+      <turbo-frame id="footer_status">
+        <div class="status" style="text-align: center; margin-top: 1rem; color: #333;">
+          Nenhuma informação disponível.
         </div>
-      <% else %>
-        <div style="text-align: center; color: #666;">
-          Nenhuma informação de status disponível.
-        </div>
-      <% end %>
+      </turbo-frame>
     </footer>
   </body>
 </html>

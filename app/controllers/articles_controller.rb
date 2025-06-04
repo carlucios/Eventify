@@ -3,7 +3,7 @@
 # Controller responsible for managing articles created by users.
 # Includes standard CRUD actions and additional support for Turbo Frame requests.
 class ArticlesController < ApplicationController
-  before_action :set_article, only: %i[show edit update destroy]
+  before_action :set_article, only: %i[show edit update destroy file_view]
   before_action :allow_turbo_only, except: %i[index]
 
   def index
@@ -48,7 +48,6 @@ class ArticlesController < ApplicationController
   end
 
   def file_view
-    @article = article_repo.find(params[:id])
     render partial: 'articles/file_view', locals: { article: @article }
   end
 
@@ -56,7 +55,6 @@ class ArticlesController < ApplicationController
 
   def set_article
     @article = article_repo.find(params[:id])
-    puts "ARTICLE #{@article}"
   end
 
   def allow_turbo_only

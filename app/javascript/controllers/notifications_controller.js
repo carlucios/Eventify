@@ -45,12 +45,13 @@ export default class extends Controller {
       this.startPolling()
     }
   }
-
+  
+  // TODO: Substituir por Action Cable
   startPolling() {
     if (this.polling) {
       return
     }
-    const intervalMs = 1000
+    const intervalMs = 1000000000
     this.polling = setInterval(() => {
       this.fetchNotifications()
     }, intervalMs)
