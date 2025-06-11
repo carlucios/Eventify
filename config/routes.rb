@@ -19,12 +19,6 @@ Rails.application.routes.draw do
     post :toggle, on: :collection
   end
 
-  resources :notifications, only: [:index] do
-    collection do
-      patch :mark_all_as_read
-    end
-  end
-
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   match '*unmatched', to: redirect('/'), via: :get

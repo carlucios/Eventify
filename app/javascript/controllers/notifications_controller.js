@@ -1,175 +1,82 @@
 import { Controller } from "@hotwired/stimulus"
+import consumer from "channels/consumer"
 
 export default class extends Controller {
   static targets = ["dropdown", "count", "list", "emptyMessage", "bell"]
-  static values = {
-    url: String,
-    interval: Number
-  }
 
   connect() {
+    window.notificationsController = this
+
     this.handleOutsideClick = this.handleOutsideClick.bind(this)
     document.addEventListener("click", this.handleOutsideClick)
 
-    this.startPolling()
+    this.subscribeToNotifications()
   }
 
   disconnect() {
     document.removeEventListener("click", this.handleOutsideClick)
-    this.stopPolling()
+    this.unsubscribeFromNotifications()
   }
 
-  async toggleDropdown(event) {
+  toggleDropdown(event) {
     event.stopPropagation()
     this.dropdownTarget.classList.toggle("hidden")
-  
+
     if (!this.dropdownTarget.classList.contains("hidden")) {
-      await this.fetchNotifications()
-  
       this.countTarget.classList.add("hidden")
       this.countTarget.textContent = ""
-  
-      this.stopPolling()
     }
-    else {
-      await this.markAllAsRead()
-    }
-  }  
+  }
 
   handleOutsideClick(event) {
     if (
       !this.dropdownTarget.contains(event.target) &&
       !this.bellTarget.contains(event.target)
     ) {
-      this.dropdownTarget.classList.add("hidden")
-      this.startPolling()
-    }
-  }
-  
-  // TODO: Substituir por Action Cable
-  startPolling() {
-    if (this.polling) {
-      return
-    }
-    const intervalMs = 1000000000
-    this.polling = setInterval(() => {
-      this.fetchNotifications()
-    }, intervalMs)
-  }
+      if (!this.dropdownTarget.classList.contains("hidden")) {
+        this.dropdownTarget.classList.add("hidden")
 
-  stopPolling() {
-    if (this.polling) {
-      clearInterval(this.polling)
-      this.polling = null
-    }
-  }
-
-  fetchNotifications() {
-    if (!this.urlValue) {
-      return
-    }
-   
-    fetch(this.urlValue, { headers: { "Accept": "application/json" } })
-    .then(async response => {
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error(`[Notifications] Erro na resposta: ${errorText}`)
-        throw new Error("Erro ao buscar notificações")
+        this.listTarget.querySelectorAll(".new-notification").forEach(el => {
+          el.classList.remove("new-notification")
+        })
       }
-      return response.json()
-    })
-    .then(data => {
-  
-      if (data.html) {
-        const tempDiv = document.createElement("div")
-        tempDiv.innerHTML = data.html.trim()
-  
-        const ul = tempDiv.querySelector("ul#notifications-list")
-  
-        if (ul) {
-          this.listTarget.innerHTML = ul.innerHTML
-        } else {
-          this.listTarget.innerHTML = data.html
-        }
+    }
+  }
 
-        const unreadCount = data.unread_count
-        if (unreadCount > 0) {
-          this.countTarget.classList.remove("hidden")
-          this.countTarget.textContent = unreadCount
-        } else {
-          this.countTarget.classList.add("hidden")
-          this.countTarget.textContent = ""
-        }
+  subscribeToNotifications() {
+    if (!window.currentUserId) return
 
-        const count = this.listTarget.querySelectorAll("li").length
-
-        if (count > 0) {
-          if (this.hasEmptyMessageTarget) {
-            this.emptyMessageTarget.remove()
-          }
-        } else {
-          this.showEmptyMessage()
-        }
-      } else {
-        this.showEmptyMessage()
+    this.channel = consumer.subscriptions.create("NotificationsChannel", {
+      received: (data) => {
+        this.handleIncomingNotification(data)
       }
     })
-  }  
+  }
 
-  showEmptyMessage() {
-    this.listTarget.innerHTML = ""
-  
-    if (!this.hasEmptyMessageTarget) {
-      const emptyLi = document.createElement("li")
-      emptyLi.textContent = "Você não possui notificações"
-      emptyLi.classList.add("no-notifications")
-      emptyLi.dataset.notificationsTarget = "emptyMessage"
-      this.listTarget.appendChild(emptyLi)
+  unsubscribeFromNotifications() {
+    if (this.channel) {
+      consumer.subscriptions.remove(this.channel)
+      this.channel = null
     }
-  }  
+  }
 
-  updateNotifications(notifications) {
-    this.listTarget.innerHTML = ""
-
-    if (!notifications.length) {
-      this.showEmptyMessage()
-      return
-    }
+  handleIncomingNotification(data) {
+    const li = document.createElement("li")
+    li.classList.add("notification-item", "new-notification")
+    li.innerHTML = `
+      <div class="notification">
+        <div>${data.body}</div>
+        <span>${data.time}</span>
+      </div>
+    `
+    this.listTarget.prepend(li)
 
     if (this.hasEmptyMessageTarget) {
       this.emptyMessageTarget.remove()
     }
 
-    notifications.forEach(html => {
-      const li = document.createElement("li")
-      li.innerHTML = html
-      this.listTarget.appendChild(li)
-    })
-
+    const currentCount = parseInt(this.countTarget.textContent || "0", 10)
     this.countTarget.classList.remove("hidden")
-    this.countTarget.textContent = notifications.length
+    this.countTarget.textContent = currentCount + 1
   }
-
-  async markAllAsRead() {
-    const url = this.urlValue.replace(/\.json$/, "/mark_all_as_read.json")
-  
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  
-    try {
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
-        }
-      })
-  
-  
-      if (!response.ok) throw new Error("Erro ao marcar notificações como lidas")
-    } catch (error) {
-      console.error("[Notifications] Erro ao marcar como lidas:", error)
-    }
-  }  
 }

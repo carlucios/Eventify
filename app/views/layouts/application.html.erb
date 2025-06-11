@@ -2,16 +2,17 @@
 <html>
   <head>
     <title>Eventify - Login</title>
+    <script>
+      window.currentUserId = <%= current_user&.id || 'null' %>;
+      window.jwtToken = "<%= Warden::JWTAuth::UserEncoder.new.call(current_user, :user, nil).first %>";
+    </script>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <%= javascript_include_tag "application", type: "module" %>
-
-    <% if current_user %>
-      <meta name="current-user-id" content="<%= current_user.id %>">
-    <% end %>
 
     <style>
       html, body {
@@ -359,6 +360,51 @@
           }
         }
       }
+
+      .notification-item {
+        border: 1px solid #595959;
+        border-radius: 6px;
+        margin-bottom: 2px;
+        padding: 8px 10px;
+        transition: background-color 0.3s ease;
+        border-color: #ffffff;
+      }
+
+      .notification-item.new-notification {
+        font-weight: 800;
+        border-color: #efefef;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        animation: fadeInHighlight 1.5s ease forwards;
+      }
+
+      .notification-item.new-notification:hover {
+        font-weight: 800;
+        background-color: #efefef;
+      }
+
+      .notification div {
+        font-size: 0.8rem;
+        display: block;
+      }
+
+      .notification span {
+        color: #595959;
+        font-size: 0.75rem;
+        font-style: italic;
+        margin-left: 30%;
+      }
+
+      .new
+
+      @keyframes fadeInHighlight {
+        0% {
+          background-color: #e6f7ff;
+        }
+        100% {
+          background-color: #f0f4f8;
+        }
+      }
+
     </style>
   </head>
 

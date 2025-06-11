@@ -73,3 +73,6 @@ gem 'memory_profiler'
 # Code smells
 gem 'reek', require: false
 gem 'rubocop', require: false
+
+# WebSocket
+gem 'redis'
