@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :reek:UtilityFunction
 
 # Provides data access methods for the User model.

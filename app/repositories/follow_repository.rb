@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :reek:InstanceVariableAssumption
 
 # Provides data access methods for the Follow model.
@@ -41,9 +42,11 @@ class FollowRepository < BaseRepository
     follow&.destroy
   end
 
+  def find_by_follower_and_followable(follower_id, followable)
+    model_class.find_by(follower_id: follower_id, followable: followable)
+  end
+
   private
 
-  def model_class
-    @model_class
-  end
+  attr_reader :model_class
 end

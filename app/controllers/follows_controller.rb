@@ -1,9 +1,11 @@
 # frozen_string_literal: true
+
 # :reek:TooManyStatements
 # :reek:InstanceVariableAssumption
+# :reek:UtilityFunction
 
 # Controller responsible for managing follows created by users.
-# Includes standard CRUD actions, additional support for Turbo Frame requests and updates status bar.
+# Includes standard CRUD actions, toggle behavior, and DDOS protection.
 class FollowsController < ApplicationController
   before_action :authenticate_user!
 
@@ -19,37 +21,56 @@ class FollowsController < ApplicationController
   end
 
   def toggle
-    followable = params[:followable_type].constantize.find(params[:followable_id])
+    success = allowed_request?
 
-    webservice_status = Thread.current[:webservice_status]
-    if handle_ddos(webservice_status) 
-      follows = current_user.follows_as_follower
-      follow = follows.find_by(followable: followable)
+    followable = find_followable if success
+    success &&= followable.present?
 
-      if follow
-        follow.destroy
-      else
-        follows.create!(followable: followable)
-      end
+    if success
+      toggle_follow(followable)
+      update_footer_status
     end
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          dom_id(followable, :follow_status),
+          partial: "follows/follow_toggle",
+          locals: { followable: followable, follow: current_user.follows_as_follower.find_by(followable: followable) }
+        )
+      end
       format.html { head :no_content }
     end
   end
 
   private
 
-  def handle_ddos(webservice_status)
-    @ddos_blocked = webservice_status&.dig(:ddos_detected)
-    if @ddos_blocked
-      StatusChannel.broadcast_to(current_user, {
-        time: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-        body: "DDOS BLOCKED: #{webservice_status}"
-      })
-    end
+  def allowed_request?
+    !Thread.current[:webservice_status]&.dig(:ddos_detected)
+  end
 
-    !@ddos_blocked
+  def find_followable
+    params[:followable_type].safe_constantize&.find_by(id: params[:followable_id])
+  end
+
+  def toggle_follow(followable)
+    user_id = current_user.id
+    follow = follow_repo.find_by_follower_and_followable(user_id, followable)
+
+    if follow
+      follow.destroy
+    else
+      follow_repo.create(follower_id: user_id, followable: followable)
+    end
+  end
+
+  def update_footer_status
+    FooterStatusChannel.broadcast_to(
+      current_user, {
+        time: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        message: !allowed_request? ? '🚫 Status: Bloqueado por suspeita de DDOS' : '✅ Status: Sistema operando normalmente'
+      }
+    )
   end
 
   def follow_repo

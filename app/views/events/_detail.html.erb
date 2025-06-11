@@ -19,8 +19,8 @@
       <p><%= event.description %></p>
 
       <!-- Seguir evento -->
-      <turbo-frame id="follow_event_status">
-        <%= form_with url: toggle_follows_path, method: :post, data: { turbo_frame: "footer_status" } do %>
+      <turbo-frame id="<%= dom_id(event, :follow_status) %>">
+        <%= form_with url: toggle_follows_path, method: :post, format: :turbo_stream do %>
           <%= hidden_field_tag :followable_type, "Event" %>
           <%= hidden_field_tag :followable_id, event.id %>
           <div class="checkbox-wrapper">
@@ -34,8 +34,8 @@
   <!-- Seguir organizador -->
   <div class="follow-toggle">
     <p><strong>Organizador:</strong> <%= event.user.name %></p>
-    <turbo-frame id="follow_organizer_status">
-      <%= form_with url: toggle_follows_path, method: :post, data: { turbo_frame: "footer_status" } do %>
+    <turbo-frame id="<%= dom_id(event.user, :follow_status) %>">
+      <%= form_with url: toggle_follows_path, method: :post, format: :turbo_stream do %>
         <%= hidden_field_tag :followable_type, "User" %>
         <%= hidden_field_tag :followable_id, event.user.id %>
         <div class="checkbox-wrapper">

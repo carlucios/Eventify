@@ -80,8 +80,9 @@ O SolidQueue foi escolhido por ser o backend de fila padrão do Rails 7.1+, leve
 
 ### 3. Armazenamento Temporário com ActiveSupport::Cache
 
-As notificações são armazenadas no cache da aplicação utilizando `ActiveSupport::Cache`, evitando a necessidade de persistência em banco de dados.  
-Esse armazenamento temporário oferece leitura rápida e se beneficia do uso de SSDs, além de estar disponível por padrão no Rails moderno.
+As consultas do tipo GET Index são armazenadas no cache da aplicação utilizando `ActiveSupport::Cache`, garantindo respostas mais rápidas e redução da carga no banco de dados.
+Esse mecanismo de cache é volátil, ou seja, não persiste os dados indefinidamente, mas oferece leitura extremamente eficiente — especialmente em servidores com armazenamento SSD.
+Além disso, é uma funcionalidade nativa do Rails moderno, não exigindo bibliotecas externas para funcionar.
 
 ---
 
@@ -95,6 +96,7 @@ Esse mecanismo permite que diferentes partes da aplicação ouçam e reajam a ev
 ### 5. Middleware Personalizado para Prevenção de Ataques DDoS
 
 Foi criado um middleware para limitar requisições de um mesmo IP, protegendo a aplicação contra sobrecarga e acessos maliciosos.
+A barra de status no footer é alimentada por informações oriundas desse middleware via Hotwire.
 
 ---
 

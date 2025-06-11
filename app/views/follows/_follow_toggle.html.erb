@@ -1,0 +1,8 @@
+<%= form_with url: toggle_follows_path, method: :post do %>
+  <%= hidden_field_tag :followable_type, followable.class.name %>
+  <%= hidden_field_tag :followable_id, followable.id %>
+  <div class="checkbox-wrapper">
+    <%= check_box_tag :follow, "1", follow.present?, id: dom_id(followable, :follow_checkbox) %>
+    <%= label_tag dom_id(followable, :follow_checkbox), "Seguir #{followable.is_a?(User) ? 'o organizador' : 'este evento'}" %>
+  </div>
+<% end %>

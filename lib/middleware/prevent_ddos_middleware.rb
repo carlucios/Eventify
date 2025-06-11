@@ -2,7 +2,7 @@
 
 class PreventDdosMiddleware
   REPEATED_REQUEST_WINDOW = 1.0
-  MAX_REPEATED_REQUESTS = 5
+  MAX_REPEATED_REQUESTS = 2
   BLOCK_DURATION = 60
 
   def initialize(app)
@@ -11,7 +11,7 @@ class PreventDdosMiddleware
 
   def call(env)
     request = ActionDispatch::Request.new(env)
-    path = request.fullpath
+    path = request.path
     ip = request.ip
     user = env['warden']&.user
 

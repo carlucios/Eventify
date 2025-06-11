@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :reek:InstanceVariableAssumption
 
 # Controller responsible for managing articles created by users.

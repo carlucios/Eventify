@@ -42,6 +42,7 @@ class BaseRepository
   private
 
   def cache_key_for_all
-    "#{@model_class.name.underscore.pluralize}/all"
+    timestamp = @model_class.maximum(:updated_at)&.utc&.iso8601(6) || 'no-records'
+    "#{@model_class.name.underscore.pluralize}/all-#{timestamp}"
   end
 end

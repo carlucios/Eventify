@@ -37,15 +37,17 @@
   <div class="follow-toggle">
     <p><strong>Autor:</strong> <%= article.user.name %></p>
 
-    <%= form_with url: toggle_follows_path, method: :post, local: true do %>
-      <%= hidden_field_tag :followable_type, "User" %>
-      <%= hidden_field_tag :followable_id, article.user.id %>
+    <turbo-frame id="<%= dom_id(article, :follow_status) %>">
+      <%= form_with url: toggle_follows_path, method: :post, format: :turbo_stream do %>
+        <%= hidden_field_tag :followable_type, "User" %>
+        <%= hidden_field_tag :followable_id, article.user.id %>
 
-      <div class="checkbox-wrapper">
-        <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
-        <%= label_tag :follow_user, "Seguir o autor" %>
-      </div>
-    <% end %>
+        <div class="checkbox-wrapper">
+          <%= check_box_tag :follow_user, "1", author_follow.present?, id: "follow_user", onchange: "this.form.submit()" %>
+          <%= label_tag :follow_user, "Seguir o autor" %>
+        </div>
+      <% end %>
+    </turbo-frame>
   </div>
 </div>
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :reek:UtilityFunction
 
 # Notifies the subscribed user about upcoming event
