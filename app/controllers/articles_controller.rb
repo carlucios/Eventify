@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :reek:InstanceVariableAssumption
 
 # Controller responsible for managing articles created by users.
 # Includes standard CRUD actions and additional support for Turbo Frame requests.

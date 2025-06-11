@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Represents a written article authored by a user.
+# Articles can be followed by users and notify their followers when updated.
+# Includes associations for the author (user), followers via a polymorphic 'Follow' model,
+# and a callback to notify followers after updates.
 class Article < ApplicationRecord
   belongs_to :user
 

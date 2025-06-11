@@ -1,5 +1,9 @@
 # frozen_string_literal: true
+# :reek:TooManyStatements
+# :reek:InstanceVariableAssumption
 
+# Controller responsible for managing follows created by users.
+# Includes standard CRUD actions, additional support for Turbo Frame requests and updates status bar.
 class FollowsController < ApplicationController
   before_action :authenticate_user!
 
@@ -15,23 +19,17 @@ class FollowsController < ApplicationController
   end
 
   def toggle
-    followable_type = params[:followable_type]
-    followable_id = params[:followable_id]
-    followable = followable_type.constantize.find(followable_id)
+    followable = params[:followable_type].constantize.find(params[:followable_id])
 
-    @ddos_blocked = Thread.current[:webservice_status]&.dig(:ddos_detected)
-
-    if @ddos_blocked
-      Rails.logger.info("DDOS BLOCKED: #{Thread.current[:webservice_status]}")
-    else
-      follow = current_user.follows_as_follower.find_by(followable: followable)
+    webservice_status = Thread.current[:webservice_status]
+    if handle_ddos(webservice_status) 
+      follows = current_user.follows_as_follower
+      follow = follows.find_by(followable: followable)
 
       if follow
         follow.destroy
-        Rails.logger.info('Unfollowed successfully')
       else
-        current_user.follows_as_follower.create!(followable: followable)
-        Rails.logger.info('Followed successulfully')
+        follows.create!(followable: followable)
       end
     end
 
@@ -41,6 +39,18 @@ class FollowsController < ApplicationController
   end
 
   private
+
+  def handle_ddos(webservice_status)
+    @ddos_blocked = webservice_status&.dig(:ddos_detected)
+    if @ddos_blocked
+      StatusChannel.broadcast_to(current_user, {
+        time: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        body: "DDOS BLOCKED: #{webservice_status}"
+      })
+    end
+
+    !@ddos_blocked
+  end
 
   def follow_repo
     @follow_repo ||= FollowRepository.new

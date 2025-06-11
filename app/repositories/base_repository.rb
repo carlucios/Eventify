@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Provides a generic repository interface for ActiveRecord models.
+# Encapsulates basic CRUD operations (create, read, update, delete)
+# to promote consistency and reuse across specific model repositories.
+# Intended to be inherited by concrete repository classes (e.g., ArticleRepository).
 class BaseRepository
   def initialize(model_class)
     @model_class = model_class

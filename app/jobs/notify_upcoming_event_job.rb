@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+# :reek:UtilityFunction
 
+# Notifies the subscribed user about upcoming event
 class NotifyUpcomingEventJob < ApplicationJob
   queue_as :default
 
@@ -9,7 +11,7 @@ class NotifyUpcomingEventJob < ApplicationJob
     interested_users.each do |user|
       NotificationsChannel.broadcast_to(
         user, {
-          title: 'Evento em breve',
+          time: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           body: "O evento \"#{event.title}\" começará em breve."
         }
       )

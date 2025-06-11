@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Represents a polymorphic follow relationship between a user (the follower)
+# and a followable entity (such as an Event or Article).
+# Triggers background jobs to notify when a follow is created or removed.
 class Follow < ApplicationRecord
   belongs_to :follower, class_name: 'User'
   belongs_to :followable, polymorphic: true

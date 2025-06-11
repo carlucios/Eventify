@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Represents an event created by a user.
+# Events can be followed by users via a polymorphic association.
+# When an event is updated, it notifies all its followers by broadcasting a 'content.updated' event.
+# This model includes associations for the event's creator (user), followers,
+# and the polymorphic 'Follow' records used to track subscriptions.
 class Event < ApplicationRecord
   belongs_to :user
 
