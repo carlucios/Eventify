@@ -1,9 +1,9 @@
 # Eventify
 
 **Aluno:** Carlucio Luis dos Santos  
-**Email:** carlucios@gmail.com  
+**Email:** [carlucios@gmail.com](mailto:carlucios@gmail.com)
 
-Eventify é um sistema web de gerenciamento de eventos e artigos, com funcionalidades voltadas tanto para usuários comuns quanto para promotores e autores. A aplicação permite cadastro e login seguros via JWT, criação e visualização de eventos e artigos, além de um dashboard com notificações em tempo real.
+**Eventify** é um sistema web de gerenciamento de eventos e artigos, com funcionalidades voltadas tanto para usuários comuns quanto para promotores e autores. A aplicação permite cadastro e login seguros via JWT, criação e visualização de eventos e artigos, além de um dashboard com notificações em tempo real.
 
 Desenvolvido com Ruby on Rails 8.0.2, o projeto aplica conceitos modernos de arquitetura, filas de background e componentes reativos com Hotwire. Foi projetado para ser simples de usar, mas com uma estrutura sólida e escalável, servindo como base para projetos mais robustos ou aplicações reais.
 
@@ -15,7 +15,7 @@ Desenvolvido com Ruby on Rails 8.0.2, o projeto aplica conceitos modernos de arq
 - [Ruby on Rails](https://rubyonrails.org/) 8.0.2  
 - [PostgreSQL](https://www.postgresql.org/)  
 - [Devise + JWT](https://github.com/waiting-for-dev/devise-jwt) para autenticação  
-- [SolidQueue](https://github.com/solidusio/solidus_queue) 
+- [SolidQueue](https://github.com/solidusio/solidus_queue)  
 - [ActiveJob](https://api.rubyonrails.org/classes/ActiveJob.html)  
 - [ActiveSupport::Cache](https://api.rubyonrails.org/classes/ActiveSupport.html)  
 - [ActiveSupport::Notification](https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html)  
@@ -74,7 +74,7 @@ Jobs foram utilizados para agendamento e envio de notificações em segundo plan
 - **Notificações de Follow/Unfollow:** Disparadas via *callbacks* do Rails.  
 - **Notificações de eventos futuros:** Agendadas diariamente utilizando a fila recorrente do SolidQueue.
 
-O `SolidQueue` foi escolhido por ser o backend de fila padrão do Rails 7.1+, leve, embutido e com excelente integração nativa. O adaptador de fila foi configurado para `:solid_queue` no `ActiveJob`.
+O SolidQueue foi escolhido por ser o backend de fila padrão do Rails 7.1+, leve, embutido e com excelente integração nativa.
 
 ---
 
@@ -87,14 +87,14 @@ Esse armazenamento temporário oferece leitura rápida e se beneficia do uso de 
 
 ### 4. Observer Pattern com ActionCable + Redis
 
-O `ActionCable` foi usado para implementar o padrão Observer (publicador/assinante), possibilitando um sistema desacoplado de eventos internos.  
+O ActionCable foi usado para implementar o padrão Observer (publicador/assinante), possibilitando um sistema desacoplado de eventos internos.  
 Esse mecanismo permite que diferentes partes da aplicação ouçam e reajam a eventos, como a criação ou atualização de recursos, sem dependências diretas entre os componentes.
 
 ---
 
-### 5. Middleware Personalizado para prevensão de ataques DDoS
+### 5. Middleware Personalizado para Prevenção de Ataques DDoS
 
-
+Foi criado um middleware para limitar requisições de um mesmo IP, protegendo a aplicação contra sobrecarga e acessos maliciosos.
 
 ---
 
@@ -104,7 +104,7 @@ As bibliotecas **Stimulus** e **Hotwire (Turbo)** foram utilizadas para criar um
 
 - **Stimulus:** Responsável pela adição de interatividade leve e controle de comportamento nos elementos da UI.  
 - **Hotwire:** Permite atualizações em tempo real com Turbo Streams e renderizações dinâmicas com Turbo Frames, eliminando a necessidade de frameworks front-end como React ou Vue.  
-  Também foi essencial para o recebimento em tempo real de notificações, substituindo a necessidade de configurar WebSockets manualmente.
+  Também foi essencial para o recebimento em tempo real de notificações.
 
 ---
 
@@ -119,17 +119,17 @@ Essas ferramentas ajudam a manter o código limpo, sustentável e fácil de dar 
 
 ---
 
-## 🚀 Teste de Performance: Follows/Unfollows
+## 🧪 Teste de Performance: Follows/Unfollows
 
 Para medir a performance da criação e remoção de follows em usuários, eventos e artigos, você pode usar a task Rake `performance:follows`.
 
 ### Como rodar
 
 ```bash
-
 bundle exec rake performance:follows TOTAL=10000
-
 ```
+
+---
 
 ## ✉️ Contato
 

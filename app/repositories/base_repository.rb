@@ -10,7 +10,9 @@ class BaseRepository
   end
 
   def all
-    @model_class.all
+    Rails.cache.fetch(cache_key_for_all, expires_in: 10.minutes) do
+      @model_class.all.to_a
+    end
   end
 
   def find(id)
@@ -35,5 +37,11 @@ class BaseRepository
 
   def new(attrs = {})
     @model_class.new(attrs)
+  end
+
+  private
+
+  def cache_key_for_all
+    "#{@model_class.name.underscore.pluralize}/all"
   end
 end
