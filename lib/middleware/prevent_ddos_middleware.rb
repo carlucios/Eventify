@@ -44,9 +44,7 @@ class PreventDdosMiddleware
     repeated_count = history.size
     ddos_detected = repeated_count > MAX_REPEATED_REQUESTS
 
-    if ddos_detected
-      Rails.cache.write(blocked_key, true, expires_in: BLOCK_DURATION)
-    end
+    Rails.cache.write(blocked_key, true, expires_in: BLOCK_DURATION) if ddos_detected
 
     Thread.current[:webservice_status] ||= {}
     Thread.current[:webservice_status].merge!(
@@ -56,7 +54,7 @@ class PreventDdosMiddleware
       blocked_path: (ddos_detected ? path : nil),
       user_email: user&.email
     )
-    
+
     @app.call(env)
   end
 

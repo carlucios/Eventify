@@ -18,27 +18,27 @@ class FollowsController < ApplicationController
     followable_type = params[:followable_type]
     followable_id = params[:followable_id]
     followable = followable_type.constantize.find(followable_id)
-  
+
     @ddos_blocked = Thread.current[:webservice_status]&.dig(:ddos_detected)
-  
-    unless @ddos_blocked
+
+    if @ddos_blocked
+      Rails.logger.info("DDOS BLOCKED: #{Thread.current[:webservice_status]}")
+    else
       follow = current_user.follows_as_follower.find_by(followable: followable)
-  
+
       if follow
         follow.destroy
-        Rails.logger.info("Unfollowed successfully")
+        Rails.logger.info('Unfollowed successfully')
       else
         current_user.follows_as_follower.create!(followable: followable)
-        Rails.logger.info("Followed successulfully")
+        Rails.logger.info('Followed successulfully')
       end
-    else
-      Rails.logger.info("DDOS BLOCKED: #{Thread.current[:webservice_status]}")
     end
-  
+
     respond_to do |format|
       format.html { head :no_content }
     end
-  end  
+  end
 
   private
 

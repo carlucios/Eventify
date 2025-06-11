@@ -85,22 +85,16 @@ Esse armazenamento temporário oferece leitura rápida e se beneficia do uso de 
 
 ---
 
-### 4. Observer Pattern com ActiveSupport::Notifications
+### 4. Observer Pattern com ActionCable + Redis
 
-O `ActiveSupport::Notifications` foi usado para implementar o padrão Observer (publicador/assinante), possibilitando um sistema desacoplado de eventos internos.  
+O `ActionCable` foi usado para implementar o padrão Observer (publicador/assinante), possibilitando um sistema desacoplado de eventos internos.  
 Esse mecanismo permite que diferentes partes da aplicação ouçam e reajam a eventos, como a criação ou atualização de recursos, sem dependências diretas entre os componentes.
 
 ---
 
-### 5. Middleware Personalizado com Métricas
+### 5. Middleware Personalizado para prevensão de ataques DDoS
 
-Um middleware personalizado foi implementado para monitorar a saúde da aplicação. Ele coleta e exibe informações no rodapé da interface, como:
 
-- Conectividade com o banco de dados  
-- Status da fila de jobs  
-- Tempo de resposta da API
-
-Esse recurso auxilia desenvolvedores e usuários administrativos na identificação rápida de problemas.
 
 ---
 

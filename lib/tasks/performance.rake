@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 namespace :performance do
-  desc "Testa a criação e remoção em massa de follows (User, Event, Article)"
+  desc 'Testa a criação e remoção em massa de follows (User, Event, Article)'
   task follows: :environment do
     require 'benchmark'
     require 'memory_profiler'
 
-    total = ENV['TOTAL'].to_i > 0 ? ENV['TOTAL'].to_i : 1_000
+    total = ENV['TOTAL'].to_i.positive? ? ENV['TOTAL'].to_i : 1_000
     puts "Iniciando teste com #{total} follows para cada tipo (User, Event, Article)..."
 
     users = User.limit(total).to_a
@@ -12,21 +14,21 @@ namespace :performance do
     articles = Article.limit(total).to_a
 
     if users.size < total
-      puts "Criando usuários adicionais para o teste..."
+      puts 'Criando usuários adicionais para o teste...'
       (total - users.size).times do |i|
-        users << User.create!(name: "User #{i}", email: "user#{SecureRandom.uuid}@example.com", password: "password")
+        users << User.create!(name: "User #{i}", email: "user#{SecureRandom.uuid}@example.com", password: 'password')
       end
     end
 
     if events.size < total
-      puts "Criando eventos adicionais para o teste..."
+      puts 'Criando eventos adicionais para o teste...'
       (total - events.size).times do |i|
         events << Event.create!(title: "Event Test #{i}", user: users.sample)
       end
     end
 
     if articles.size < total
-      puts "Criando artigos adicionais para o teste..."
+      puts 'Criando artigos adicionais para o teste...'
       (total - articles.size).times do |i|
         articles << Article.create!(title: "Article Test #{i}", user: users.sample)
       end
@@ -71,8 +73,8 @@ namespace :performance do
     puts "  • Tempo total remoção: #{removal_time.round(3)}s"
     puts "  • Eficiência de criação: #{efficiency} registros/s"
     puts "  • Tempo de job (simulado): #{simulated_job_time.round(3)}s"
-    puts format("  • Memória utilizada: %.1f MB", memory_used_mb)
+    puts format('  • Memória utilizada: %.1f MB', memory_used_mb)
     puts "  • Status: #{efficiency > 3000 ? '✅ EXCELENTE' : '⚠️ REGULAR'}"
-    puts format("  • Tempo total do teste: %.3fs", total_test_time)
+    puts format('  • Tempo total do teste: %.3fs', total_test_time)
   end
 end

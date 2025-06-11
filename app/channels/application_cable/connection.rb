@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
     identified_by :current_user
@@ -14,15 +16,11 @@ module ApplicationCable
         decoded_token = JWT.decode(token, ENV['DEVISE_JWT_SECRET_KEY'], true, algorithm: 'HS256')
         user_id = decoded_token[0]['sub']
         verified_user = User.find_by(id: user_id)
-    
-        if verified_user
-          verified_user
-        else
-          reject_unauthorized_connection
-        end
-      rescue JWT::DecodeError => e
+
+        verified_user || reject_unauthorized_connection
+      rescue JWT::DecodeError
         reject_unauthorized_connection
       end
-    end    
+    end
   end
 end

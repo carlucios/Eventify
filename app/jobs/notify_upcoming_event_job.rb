@@ -9,7 +9,7 @@ class NotifyUpcomingEventJob < ApplicationJob
     interested_users.each do |user|
       NotificationsChannel.broadcast_to(
         user, {
-          title: "Evento em breve",
+          title: 'Evento em breve',
           body: "O evento \"#{event.title}\" começará em breve."
         }
       )
