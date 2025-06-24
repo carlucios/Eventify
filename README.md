@@ -121,18 +121,6 @@ Essas ferramentas ajudam a manter o código limpo, sustentável e fácil de dar 
 
 ---
 
-## 🧪 Teste de Performance: Follows/Unfollows
-
-Para medir a performance da criação e remoção de follows em usuários, eventos e artigos, você pode usar a task Rake `performance:follows`.
-
-### Como rodar
-
-```bash
-bundle exec rake performance:follows TOTAL=10000
-```
-
----
-
 ## ✉️ Contato
 
 Carlucio Luis dos Santos  
